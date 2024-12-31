@@ -92,4 +92,4 @@ nmap('<leader>r', ':source %<CR>')
 nmap('<Esc>', ':noh<CR>')
 nmap('<A-S-w>', '<S-*>')
 nmap('<leader>l', ':Lazy<CR>')
-
+nmap('"', '%')
