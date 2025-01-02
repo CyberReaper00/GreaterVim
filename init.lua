@@ -25,6 +25,7 @@ vim.g.maplocalleader = "\\"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
+vim.o.ignorecase = true
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -82,6 +83,7 @@ nmap('K', '<C-d>zz')
 nmap('n', 'nzz')
 nmap('<C-a>', 'ggVG"+y')
 nmap('y', '"+y')
+nmap('d', '"+d')
 nmap('M', '`')
 nmap('gg', 'ggzz')
 nmap('G', 'Gzz')
