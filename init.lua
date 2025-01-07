@@ -17,15 +17,15 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Make sure to setup `mapleader` and `maplocalleader` before
--- loading lazy.nvim so that mappings are correct.
--- This is also a good place to setup other settings (vim.opt)
+-- Leader-key initialization
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
+
+-- Accessibilty settings
+vim.o.ignorecase = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
-vim.o.ignorecase = true
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -33,11 +33,11 @@ require("lazy").setup({
 	{"rebelot/kanagawa.nvim", config = function() vim.cmd.colorscheme "kanagawa" end},
 	{
 	    'nvim-telescope/telescope.nvim', tag = '0.1.8',
-	    dependencies = { 'nvim-lua/plenary.nvim' }
+	    dependencies = {'nvim-lua/plenary.nvim'}
 	}
     },
 
-    checker = { enabled = true },
+    checker = {enabled = true},
 })
 
 require('telescope').setup({
@@ -70,6 +70,15 @@ local nmap = function(lhs, rhs)
     end
 end
 
+-- Leader-key remaps
+nmap('<leader>s', ':w<CR>')
+nmap('<leader>q', ':q<CR>')
+nmap('<leader>r', ':source %<CR>')
+nmap('<leader>l', ':Lazy<CR>')
+nmap('<leader>w', 've"+y')
+nmap('<leader>W', 've"+gP')
+
+-- Movement remaps
 nmap('j','kzz')
 nmap('k', 'jzz')
 nmap('a', 'i')
@@ -80,18 +89,20 @@ nmap('H', '^')
 nmap('L', '$')
 nmap('J', '<C-u>zz')
 nmap('K', '<C-d>zz')
-nmap('n', 'nzz')
-nmap('<C-a>', 'ggVG"+y')
-nmap('y', '"+y')
-nmap('d', '"+d')
+nmap('n', 'Nzz')
+nmap('N', 'nzz')
 nmap('M', '`')
 nmap('gg', 'ggzz')
 nmap('G', 'Gzz')
+
+-- Editing remaps
+nmap('<C-a>', 'ggVG"+y')
 nmap(';', 'R')
-nmap('<leader>s', ':w<CR>')
-nmap('<leader>q', ':q<CR>')
-nmap('<leader>r', ':source %<CR>')
+nmap('y', '"+y')
+nmap('d', '"+d')
+nmap('s', '"+s')
+
+-- Searching remaps
 nmap('<Esc>', ':noh<CR>')
 nmap('<A-S-w>', '<S-*>')
-nmap('<leader>l', ':Lazy<CR>')
 nmap('"', '%')
