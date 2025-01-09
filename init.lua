@@ -77,6 +77,7 @@ nmap('<leader>r', ':source %<CR>')
 nmap('<leader>l', ':Lazy<CR>')
 nmap('<leader>w', 've"+y')
 nmap('<leader>W', 've"+gP')
+nmap('<leader>v', '<C-v>')
 
 -- Movement remaps
 nmap('j','kzz')
