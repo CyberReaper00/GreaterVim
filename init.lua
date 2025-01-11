@@ -104,6 +104,6 @@ nmap('d', '"+d')
 nmap('s', '"+s')
 
 -- Searching remaps
-nmap('<Esc>', ':noh<CR>')
+nmap('<CR>', ':noh<CR>')
 nmap('<A-S-w>', '<S-*>')
 nmap('"', '%')
