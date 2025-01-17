@@ -110,3 +110,89 @@ nmap('s', '"+s')
 nmap('<Esc>', ':noh<CR>')
 nmap('<A-S-w>', '<S-*>')
 nmap('"', '%')
+
+-- LaTeX Config
+vim.cmd([[
+  " Greek letters
+  iabbrev _alpha α
+  iabbrev _beta β
+  iabbrev _gamma γ
+  iabbrev _delta δ
+  iabbrev _epsilon ε
+  iabbrev _zeta ζ
+  iabbrev _eta η
+  iabbrev _theta θ
+  iabbrev _iota ι
+  iabbrev _kappa κ
+  iabbrev _lambda λ
+  iabbrev _mu μ
+  iabbrev _nu ν
+  iabbrev _xi ξ
+  iabbrev _pi π
+  iabbrev _rho ρ
+  iabbrev _sigma σ
+  iabbrev _tau τ
+  iabbrev _upsilon υ
+  iabbrev _phi φ
+  iabbrev _chi χ
+  iabbrev _psi ψ
+  iabbrev _omega ω
+
+  " Capital Greek letters
+  iabbrev _Gamma Γ
+  iabbrev _Delta Δ
+  iabbrev _Theta Θ
+  iabbrev _Lambda Λ
+  iabbrev _Xi Ξ
+  iabbrev _Pi Π
+  iabbrev _Sigma Σ
+  iabbrev _Upsilon Υ
+  iabbrev _Phi Φ
+  iabbrev _Psi Ψ
+  iabbrev _Omega Ω
+
+  " Common math symbols
+  iabbrev _infty ∞
+  iabbrev _partial ∂
+  iabbrev _nabla ∇
+  iabbrev _pm ±
+  iabbrev _times ×
+  iabbrev _div ÷
+  iabbrev _cdot ⋅
+  iabbrev _leq ≤
+  iabbrev _geq ≥
+  iabbrev _neq ≠
+  iabbrev _approx ≈
+  iabbrev _propto ∝
+  iabbrev _forall ∀
+  iabbrev _exists ∃
+  iabbrev _emptyset ∅
+  iabbrev _in ∈
+  iabbrev _notin ∉
+  iabbrev _subset ⊂
+  iabbrev _subseteq ⊆
+  iabbrev _supset ⊃
+  iabbrev _supseteq ⊇
+  iabbrev _cup ∪
+  iabbrev _cap ∩
+  iabbrev _setminus ∖
+  iabbrev _Rightarrow ⇒
+  iabbrev _Leftarrow ⇐
+  iabbrev _Leftrightarrow ⇔
+  iabbrev _to →
+  iabbrev _gets ←
+  iabbrev _iff ⇔
+
+  " Miscellaneous symbols
+  iabbrev _degree °
+  iabbrev _ell ℓ
+  iabbrev _angle ∠
+  iabbrev _therefore ∴
+  iabbrev _because ∵
+  iabbrev _sqrt √
+  iabbrev _sum ∑
+  iabbrev _prod ∏
+  iabbrev _int ∫
+  iabbrev _oint ∮
+]])
+
