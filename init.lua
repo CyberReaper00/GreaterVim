@@ -21,8 +21,10 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Accessibilty settings
+-- Accessibility settings
 vim.o.ignorecase = true
+vim.o.spell = true
+vim.o.spelllang = 'en_gb'
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
@@ -46,7 +48,7 @@ require('telescope').setup({
     },
 })
 
-------------------------------- PLugin Bindings -------------------------------
+------------------------------- Plugin Bindings -------------------------------
 
 local aa = require('telescope.builtin')
 vim.keymap.set('n', '<leader>f', aa.find_files, {})
@@ -95,6 +97,7 @@ nmap('N', 'Nzz')
 nmap('M', '`')
 nmap('gg', 'ggzz')
 nmap('G', 'Gzz')
+nmap('<C-s>', ']s')
 
 -- Editing remaps
 nmap('<C-a>', 'ggVG"+y')
@@ -104,6 +107,6 @@ nmap('d', '"+d')
 nmap('s', '"+s')
 
 -- Searching remaps
-nmap('<CR>', ':noh<CR>')
+nmap('<Esc>', ':noh<CR>')
 nmap('<A-S-w>', '<S-*>')
 nmap('"', '%')
