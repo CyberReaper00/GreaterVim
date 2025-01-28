@@ -98,10 +98,6 @@ nmap('M', '`')
 nmap('gg', 'ggzz')
 nmap('G', 'Gzz')
 nmap('<C-s>', ']s')
-nmap('w', 'e')
-nmap('e', 'w')
-nmap('W', 'E')
-nmap('E', 'W')
 
 -- Editing remaps
 nmap('<C-a>', 'ggVG"+y')
