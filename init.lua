@@ -17,54 +17,56 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
--- Leader-key initialization
+--=== Leader-key initialization ===
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
--- Accessibility settings
+--=== Accessibility settings ===
 vim.o.ignorecase = true
 vim.o.spell = true
-vim.o.spelllang = 'en_gb'
+vim.o.spelllang = "en_gb"
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
--- Setup lazy.nvim
+--=== Setup lazy.nvim ===
 require("lazy").setup({
     spec = {
 	{"rebelot/kanagawa.nvim", config = function() vim.cmd.colorscheme "kanagawa" end},
 	{
-	    'nvim-telescope/telescope.nvim', tag = '0.1.8',
-	    dependencies = {'nvim-lua/plenary.nvim'}
+	    "nvim-telescope/telescope.nvim", tag = "0.1.8",
+	    dependencies = {"nvim-lua/plenary.nvim"}
 	}
     },
 
     checker = {enabled = true},
 })
 
-require('telescope').setup({
+require("telescope").setup({
     defaults = {
-	path_display = {'truncate'},
+	path_display = {"truncate"},
     },
 })
 
 ------------------------------- Plugin Bindings -------------------------------
 
-local aa = require('telescope.builtin')
-vim.keymap.set('n', '<leader>f', aa.find_files, {})
-vim.keymap.set('n', '<leader>g', aa.live_grep, {})
+local aa = require("telescope.builtin")
+vim.keymap.set("n", "<leader>f", aa.find_files, {})
+vim.keymap.set("n", "<leader>g", aa.live_grep, {})
 
 --[[
-    local ts_config = require('nvim-treesitter.configs')
+    local ts_config = require("nvim-treesitter.configs")
     ts_config.setup({
-    ensure_installed = {'html', 'css', 'javascript', 'lua', 'python'},
+    ensure_installed = {"html", "css", "javascript", "lua", "python"},
     highlight = {enable = true},
     indent = {enable = true}
 })
 ]]--
 ------------------------------- Global Bindings -------------------------------
 
-local modes = {'n', 'v'}
+local modes = {"n", "v"}
 
 local nmap = function(lhs, rhs)
     for _, mode in ipairs(modes) do
@@ -72,45 +74,47 @@ local nmap = function(lhs, rhs)
     end
 end
 
--- Leader-key remaps
-nmap('<leader>s', ':w<CR>')
-nmap('<leader>q', ':q<CR>')
-nmap('<leader>r', ':source %<CR>')
-nmap('<leader>l', ':Lazy<CR>')
-nmap('<leader>w', 've"+y')
-nmap('<leader>W', 've"+gP')
-nmap('<leader>v', '<C-v>')
+--=== Leader-key remaps ===
+nmap("<leader>s", ":w<CR>")
+nmap("<leader>q", ":q<CR>")
+nmap("<leader>r", ":source %<CR>")
+nmap("<leader>l", ":Lazy<CR>")
+nmap("<leader>w", '"+yiw')
+nmap("<leader>e", 'viw"+gP')
+nmap("<leader>v", "<C-v>")
 
--- Movement remaps
-nmap('k','kzz')
-nmap('j', 'jzz')
-nmap('K', '<C-u>zz')
-nmap('J', '<C-d>zz')
-nmap('a', 'i')
-nmap('A', 'I')
-nmap('i', 'a')
-nmap('I', 'A')
-nmap('H', '^')
-nmap('L', '$')
-nmap('n', 'nzz')
-nmap('N', 'Nzz')
-nmap('M', '`')
-nmap('gg', 'ggzz')
-nmap('G', 'Gzz')
+--=== Movement remaps ===
+nmap("k","kzz")
+nmap("j", "jzz")
+nmap("K", "<C-u>zz")
+nmap("J", "<C-d>zz")
+nmap("a", "i")
+nmap("A", "I")
+nmap("i", "a")
+nmap("I", "A")
+nmap("H", "^")
+nmap("L", "$")
+vim.keymap.set("v", "L", "$h")
+nmap("n", "nzz")
+nmap("N", "Nzz")
+nmap("M", "`")
+nmap("gg", "ggzz")
+nmap("G", "Gzz")
 
--- Editing remaps
-nmap('<C-a>', 'ggVG"+y')
-nmap(';', 'R')
-nmap('y', '"+y')
-nmap('d', '"+d')
-nmap('s', '"+s')
+--=== Editing remaps ===
+nmap("<C-a>", 'ggVG"+y')
+nmap(";", "R")
+nmap("y", '"+y')
+nmap("d", '"+d')
+nmap("s", '"+s')
+nmap("U", "<C-r>")
 
--- Searching remaps
-nmap('<Esc>', ':noh<CR>')
-nmap('<A-S-w>', '<S-*>')
-nmap('"', '%')
+--=== Searching remaps ===
+nmap("<Esc>", ":noh<CR>")
+nmap("<A-S-w>", "<S-*>")
+nmap('"', "%")
 
--- LaTeX Config
+--=== LaTeX Config ===
 vim.cmd([[
   " Greek letters
   iabbrev _alpha α
