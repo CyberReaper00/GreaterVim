@@ -38,7 +38,8 @@ require("lazy").setup({
 	{
 	    "nvim-telescope/telescope.nvim", tag = "0.1.8",
 	    dependencies = {"nvim-lua/plenary.nvim"}
-	}
+	},
+	{"ThePrimeagen/vim-be-good"}
     },
 
     checker = {enabled = true},
@@ -66,11 +67,31 @@ vim.keymap.set("n", "<leader>g", aa.live_grep, {})
 ]]--
 ------------------------------- Global Bindings -------------------------------
 
+---------------- Set keymap function ----------------
 local modes = {"n", "v"}
 
 local nmap = function(lhs, rhs)
     for _, mode in ipairs(modes) do
 	vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
+    end
+end
+
+---------------- Search timer function ----------------
+local wait_map = function(key)
+    for _, mode in ipairs(modes) do
+	vim.keymap.set(mode, key, function()
+	    if key == "f" then
+		vim.api.nvim_feedkeys("/", mode, true)
+	    elseif key == "F" then
+		vim.api.nvim_feedkeys("?", mode, true)
+	    end
+
+	  -- Start a timer in the background
+	  local timer = vim.loop.new_timer()
+	  timer:start(500, 0, vim.schedule_wrap(function()
+	    vim.api.nvim_feedkeys("\n", mode, true) -- Press Enter after 500ms
+	  end))
+	end, { noremap = true, silent = true })
     end
 end
 
@@ -111,8 +132,10 @@ nmap("U", "<C-r>")
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>")
-nmap("<A-S-w>", "<S-*>")
+nmap("<A-S-w>", "<*>")
 nmap('"', "%")
+wait_map("f")
+wait_map("F")
 
 --=== LaTeX Config ===
 vim.cmd([[
