@@ -132,7 +132,7 @@ nmap("U", "<C-r>")
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>")
-nmap("<A-S-w>", "<*>")
+nmap("<A-S-w>", "*")
 nmap('"', "%")
 wait_map("f")
 wait_map("F")
