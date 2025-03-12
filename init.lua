@@ -129,6 +129,7 @@ nmap("y", '"+y')
 nmap("d", '"+d')
 nmap("s", '"+s')
 nmap("U", "<C-r>")
+nmap("dH", "d^")
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>")
