@@ -1,5 +1,6 @@
 
 ------------------------------- Lazy.nvim Config -------------------------------
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -24,6 +25,7 @@ vim.g.maplocalleader = "\\"
 vim.o.ignorecase = true
 vim.o.spell = true
 vim.o.spelllang = "en_gb"
+vim.o.splitright = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
@@ -54,7 +56,19 @@ require("telescope").setup({
 
 local aa = require("telescope.builtin")
 vim.keymap.set("n", "<leader>f", aa.find_files, {})
-vim.keymap.set("n", "<leader>g", aa.live_grep, {})
+vim.g.neovide_scale_factor = 1.0
+
+vim.keymap.set("n", "<C-=>", function()
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>l", true, false, true), "n", false)
+    vim.cmd("vert resize 30")
+ end)
+
+vim.keymap.set("n", "<C-->", function()
+    vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<C-w>l", true, false, true), "n", false)
+    vim.cmd("vert resize 20")
+ end)
 
 --[[
     local ts_config = require("nvim-treesitter.configs")
@@ -99,10 +113,18 @@ nmap("<leader>s", ":w<CR>")
 nmap("<leader>q", ":q<CR>")
 nmap("<leader>r", ":source %<CR>")
 nmap("<leader>l", ":Lazy<CR>")
-nmap("<leader>w", '"+yiw')
-nmap("<leader>e", 'viw"+gP')
+nmap("<leader>e", '"+yiw')
+nmap("<leader>p", 'viw"+p')
 nmap("<leader>v", "<C-v>")
 nmap("<leader>j", "<C-^>")
+nmap("<leader>i", "gt")
+nmap("<leader>w", "<C-w>h")
+nmap("<leader>o", "<C-w>l")
+nmap("<leader>t", ":term<CR>")
+nmap("<leader>S", ":30vnew<CR>")
+nmap("<leader>h", ":vert resize 30<CR>")
+nmap("<leader>n", ":tabnew<CR>")
+vim.keymap.set("t", "<leader><Esc>", "<C-\\><C-n>")
 
 --=== Movement remaps ===
 nmap("k","kzz")
@@ -123,13 +145,21 @@ nmap("gg", "ggzz")
 nmap("G", "Gzz")
 
 --=== Editing remaps ===
-nmap("<C-a>", 'ggVG"+y')
+nmap("<C-a>", 'ggVG')
+nmap("<leader>a", 'ggVG"+y')
 nmap(";", "R")
 nmap("y", '"+y')
 nmap("d", '"+d')
 nmap("s", '"+s')
 nmap("U", "<C-r>")
 nmap("dH", "d^")
+vim.keymap.set("i", "<M-B>", "<C-w>")
+vim.keymap.set("i", "<M-b>", "<BS>")
+vim.keymap.set("t", "<M-B>", "<C-w>")
+vim.keymap.set("t", "<M-b>", "<BS>")
+vim.keymap.set("t", "<M-b>", "<BS>")
+vim.keymap.set("i", "<C-v>", "<C-r>+")
+nmap("p", '"+p')
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>")
@@ -138,92 +168,7 @@ nmap('"', "%")
 wait_map("f")
 wait_map("F")
 
---=== LaTeX Config ===
+--=== Something to try out ===
 vim.cmd([[
-    " Automatic block insertion
-    iabbrev {p {<CR>}<Esc>O
-    iabbrev { {}
 
-    " Greek letters
-    iabbrev _alpha α
-    iabbrev _beta β
-    iabbrev _gamma γ
-    iabbrev _delta δ
-    iabbrev _epsilon ε
-    iabbrev _zeta ζ
-    iabbrev _eta η
-    iabbrev _theta θ
-    iabbrev _iota ι
-    iabbrev _kappa κ
-    iabbrev _lambda λ
-    iabbrev _mu μ
-    iabbrev _nu ν
-    iabbrev _xi ξ
-    iabbrev _pi π
-    iabbrev _rho ρ
-    iabbrev _sigma σ
-    iabbrev _tau τ
-    iabbrev _upsilon υ
-    iabbrev _phi φ
-    iabbrev _chi χ
-    iabbrev _psi ψ
-    iabbrev _omega ω
-
-    " Capital Greek letters
-    iabbrev _Gamma Γ
-    iabbrev _Delta Δ
-    iabbrev _Theta Θ
-    iabbrev _Lambda Λ
-    iabbrev _Xi Ξ
-    iabbrev _Pi Π
-    iabbrev _Sigma Σ
-    iabbrev _Upsilon Υ
-    iabbrev _Phi Φ
-    iabbrev _Psi Ψ
-    iabbrev _Omega Ω
-
-    " Common math symbols
-    iabbrev _infty ∞
-    iabbrev _partial ∂
-    iabbrev _nabla ∇
-    iabbrev _pm ±
-    iabbrev _times ×
-    iabbrev _div ÷
-    iabbrev _cdot ⋅
-    iabbrev _leq ≤
-    iabbrev _geq ≥
-    iabbrev _neq ≠
-    iabbrev _approx ≈
-    iabbrev _propto ∝
-    iabbrev _forall ∀
-    iabbrev _exists ∃
-    iabbrev _emptyset ∅
-    iabbrev _in ∈
-    iabbrev _notin ∉
-    iabbrev _subset ⊂
-    iabbrev _subseteq ⊆
-    iabbrev _supset ⊃
-    iabbrev _supseteq ⊇
-    iabbrev _cup ∪
-    iabbrev _cap ∩
-    iabbrev _setminus ∖
-    iabbrev _Rightarrow ⇒
-    iabbrev _Leftarrow ⇐
-    iabbrev _Leftrightarrow ⇔
-    iabbrev _to →
-    iabbrev _gets ←
-    iabbrev _iff ⇔
-
-    " Miscellaneous symbols
-    iabbrev _degree °
-    iabbrev _ell ℓ
-    iabbrev _angle ∠
-    iabbrev _therefore ∴
-    iabbrev _because ∵
-    iabbrev _sqrt √
-    iabbrev _sum ∑
-    iabbrev _prod ∏
-    iabbrev _int ∫
-    iabbrev _oint ∮
 ]])
-
