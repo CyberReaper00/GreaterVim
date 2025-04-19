@@ -23,7 +23,7 @@ vim.g.maplocalleader = "\\"
 
 --=== Accessibility settings ===
 vim.o.ignorecase = true
-vim.o.spell = true
+vim.o.spell = false
 vim.o.spelllang = "en_gb"
 vim.o.splitright = true
 vim.opt.number = true
@@ -50,6 +50,44 @@ require("telescope").setup({
     defaults = {
 	path_display = {"truncate"},
     },
+})
+
+------------------------------- Custom Homepage -------------------------------
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+	vim.cmd("enew")
+	vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
+	vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
+	
+	local banner = {
+	    " ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███╗   ███╗",
+	    "██╔════╝ ██╔══██╗██╔════╝██╔══██╗╚══██╔══╝██╔════╝██╔══██╗██║   ██║██║████╗ ████║",
+	    "██║  ███╗██████╔╝█████╗  ███████║   ██║   █████╗  ██████╔╝██║   ██║██║██╔████╔██║",
+	    "██║   ██║██╔══██╗██╔══╝  ██╔══██║   ██║   ██╔══╝  ██╔══██╗╚██╗ ██╔╝██║██║╚██╔╝██║",
+	    "╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║ ╚████╔╝ ██║██║ ╚═╝ ██║",
+	    " ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+	    "The Greatest a Vim could be",
+	    "",
+	    "",
+	    "",
+	    "",
+	}
+
+	local pad_lines = math.floor((vim.o.lines - #banner) / 2)
+	for _ = 1, pad_lines do
+	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
+	end
+
+	local win_width = vim.o.columns
+	for _, line in ipairs(banner) do
+	    local line_width = vim.fn.strdisplaywidth(line)
+	    local padding = math.floor((win_width - line_width) / 2)
+	    local padded_line = string.rep(" ", padding) .. line
+	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {padded_line})
+	end
+
+	vim.cmd("normal! gg")
+    end
 })
 
 ------------------------------- Plugin Bindings -------------------------------
@@ -81,17 +119,24 @@ vim.keymap.set("n", "<C-->", function()
 ------------------------------- Global Bindings -------------------------------
 
 ---------------- Set keymap function ----------------
-local modes = {"n", "v"}
+local m0 = {"n", "v"}
+local m1 = {"t", "i"}
 
-local nmap = function(lhs, rhs)
-    for _, mode in ipairs(modes) do
-	vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
+local nmap = function(lhs, rhs, type)
+    if type == 0 then
+	for _, mode in ipairs(m0) do
+	    vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
+	end
+    elseif type == 1 then
+	for _, mode in ipairs(m1) do
+	    vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
+	end
     end
 end
 
 ---------------- Search timer function ----------------
 local wait_map = function(key)
-    for _, mode in ipairs(modes) do
+    for _, mode in ipairs(m0) do
 	vim.keymap.set(mode, key, function()
 	    if key == "f" then
 		vim.api.nvim_feedkeys("/", mode, true)
@@ -109,62 +154,59 @@ local wait_map = function(key)
 end
 
 --=== Leader-key remaps ===
-nmap("<leader>s", ":w<CR>")
-nmap("<leader>q", ":q<CR>")
-nmap("<leader>r", ":source %<CR>")
-nmap("<leader>l", ":Lazy<CR>")
-nmap("<leader>e", '"+yiw')
-nmap("<leader>p", 'viw"+p')
-nmap("<leader>v", "<C-v>")
-nmap("<leader>j", "<C-^>")
-nmap("<leader>i", "gt")
-nmap("<leader>w", "<C-w>h")
-nmap("<leader>o", "<C-w>l")
-nmap("<leader>t", ":term<CR>")
-nmap("<leader>S", ":30vnew<CR>")
-nmap("<leader>h", ":vert resize 30<CR>")
-nmap("<leader>n", ":tabnew<CR>")
+nmap("<leader>s", ":w<CR>", 0)
+nmap("<leader>q", ":q<CR>", 0)
+nmap("<leader>r", ":source %<CR>", 0)
+nmap("<leader>l", ":Lazy<CR>", 0)
+nmap("<leader>e", '"+yiw', 0)
+nmap("<leader>p", 'viw"+p', 0)
+nmap("<leader>v", "<C-v>", 0)
+nmap("<leader>j", "<C-^>", 0)
+nmap("<leader>i", "gt", 0)
+nmap("<leader>w", "<C-w>h", 0)
+nmap("<leader>o", "<C-w>l", 0)
+nmap("<leader>t", ":term<CR>", 0)
+nmap("<leader>S", ":30vnew<CR>", 0)
+nmap("<leader>h", ":vert resize 30<CR>", 0)
+nmap("<leader>n", ":tabnew<CR>", 0)
 vim.keymap.set("t", "<leader><Esc>", "<C-\\><C-n>")
 
 --=== Movement remaps ===
-nmap("k","kzz")
-nmap("j", "jzz")
-nmap("K", "<C-u>zz")
-nmap("J", "<C-d>zz")
-nmap("a", "i")
-nmap("A", "I")
-nmap("i", "a")
-nmap("I", "A")
-nmap("H", "^")
-nmap("L", "$")
+nmap("k","kzz", 0)
+nmap("j", "jzz", 0)
+nmap("K", "<C-u>zz", 0)
+nmap("J", "<C-d>zz", 0)
+nmap("a", "i", 0)
+nmap("A", "I", 0)
+nmap("i", "a", 0)
+nmap("I", "A", 0)
+nmap("H", "^", 0)
+nmap("L", "$", 0)
 vim.keymap.set("v", "L", "$h")
-nmap("n", "nzz")
-nmap("N", "Nzz")
-nmap("M", "`")
-nmap("gg", "ggzz")
-nmap("G", "Gzz")
+nmap("n", "nzz", 0)
+nmap("N", "Nzz", 0)
+nmap("M", "`", 0)
+nmap("gg", "ggzz", 0)
+nmap("G", "Gzz", 0)
 
 --=== Editing remaps ===
-nmap("<C-a>", 'ggVG')
-nmap("<leader>a", 'ggVG"+y')
-nmap(";", "R")
-nmap("y", '"+y')
-nmap("d", '"+d')
-nmap("s", '"+s')
-nmap("U", "<C-r>")
-nmap("dH", "d^")
-vim.keymap.set("i", "<M-B>", "<C-w>")
-vim.keymap.set("i", "<M-b>", "<BS>")
-vim.keymap.set("t", "<M-B>", "<C-w>")
-vim.keymap.set("t", "<M-b>", "<BS>")
-vim.keymap.set("t", "<M-b>", "<BS>")
-vim.keymap.set("i", "<C-v>", "<C-r>+")
+nmap("<C-a>", 'ggVG', 0)
+nmap("<leader>a", 'ggVG"+y', 0)
+nmap(";", "R", 0)
+nmap("y", '"+y', 0)
+nmap("d", '"+d', 0)
+nmap("s", '"+s', 0)
+nmap("U", "<C-r>", 0)
+nmap("dH", "d^", 0)
+nmap("<M-B>", "<C-w>", 1)
+nmap("<M-b>", "<BS>", 1)
+nmap("<C-v>", "<C-r>+", 1)
 nmap("p", '"+p')
 
 --=== Searching remaps ===
-nmap("<Esc>", ":noh<CR>")
-nmap("<A-S-w>", "*")
-nmap('"', "%")
+nmap("<Esc>", ":noh<CR>", 0)
+nmap("<A-S-w>", "*", 0)
+nmap('"', "%", 0)
 wait_map("f")
 wait_map("F")
 
