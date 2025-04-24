@@ -92,29 +92,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 ------------------------------- Plugin Bindings -------------------------------
 
---args = string.format('%s, "--type", "d", "--exclude", "%s"', args, name)
-local search_params = function(filenames, dirnames)
-    local args = {"fd", "--type", "f", "--hidden", "--no-ignore"}
-
-    for _, name in ipairs(filenames) do
-	table.insert(args, "--type")
-	table.insert(args, "f")
-	table.insert(args, "--exclude")
-	table.insert(args, name)
-    end
-    for _, name in ipairs(dirnames) do
-	table.insert(args, "--type")
-	table.insert(args, "d")
-	table.insert(args, "--exclude")
-	table.insert(args, name)
-    end
-    vim.print(args)
-    return args
-end
-
 local scope = require("telescope.builtin")
-local exc_dirs = {".config", ".local", ".git", "firefox"}
-local exc_files = {".gitignore", ".gitconfig"}
 
 vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
