@@ -92,9 +92,40 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 ------------------------------- Plugin Bindings -------------------------------
 
-local aa = require("telescope.builtin")
-vim.keymap.set("n", "<leader>f", aa.find_files, {})
-vim.g.neovide_scale_factor = 1.0
+--args = string.format('%s, "--type", "d", "--exclude", "%s"', args, name)
+local search_params = function(filenames, dirnames)
+    local args = {"fd", "--type", "f", "--hidden", "--no-ignore"}
+
+    for _, name in ipairs(filenames) do
+	table.insert(args, "--type")
+	table.insert(args, "f")
+	table.insert(args, "--exclude")
+	table.insert(args, name)
+    end
+    for _, name in ipairs(dirnames) do
+	table.insert(args, "--type")
+	table.insert(args, "d")
+	table.insert(args, "--exclude")
+	table.insert(args, name)
+    end
+    vim.print(args)
+    return args
+end
+
+local scope = require("telescope.builtin")
+local exc_dirs = {".config", ".local", ".git", "firefox"}
+local exc_files = {".gitignore", ".gitconfig"}
+
+vim.keymap.set("n", "<leader>f", function()
+    scope.find_files({
+	hidden = false,
+	find_command = {
+	    "fd", ".", "Documents", "nixos", "f", "--hidden", "--no-ignore"
+	}
+    })
+end)
+
+vim.g.neovide_scale_factor = 1.1
 
 vim.keymap.set("n", "<C-=>", function()
     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
