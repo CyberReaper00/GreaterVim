@@ -31,6 +31,7 @@ vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.opt.clipboard:append("unnamedplus")
 
 --=== Setup lazy.nvim ===
 require("lazy").setup({
@@ -40,7 +41,8 @@ require("lazy").setup({
 	    "nvim-telescope/telescope.nvim", tag = "0.1.8",
 	    dependencies = {"nvim-lua/plenary.nvim"}
 	},
-	{"ThePrimeagen/vim-be-good"}
+	{"ThePrimeagen/vim-be-good"},
+	{"nvim-treesitter/nvim-treesitter"}
     },
 
     checker = {enabled = true},
@@ -103,7 +105,7 @@ vim.keymap.set("n", "<leader>f", function()
     })
 end)
 
-vim.g.neovide_scale_factor = 1.1
+vim.g.neovide_scale_factor = 0.8
 
 vim.keymap.set("n", "<C-=>", function()
     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
@@ -117,14 +119,12 @@ vim.keymap.set("n", "<C-->", function()
     vim.cmd("vert resize 20")
  end)
 
---[[
-    local ts_config = require("nvim-treesitter.configs")
-    ts_config.setup({
+local ts_config = require("nvim-treesitter.configs")
+ts_config.setup({
     ensure_installed = {"html", "css", "javascript", "lua", "python"},
     highlight = {enable = true},
     indent = {enable = true}
 })
-]]--
 ------------------------------- Global Bindings -------------------------------
 
 ---------------- Set keymap function ----------------
