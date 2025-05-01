@@ -100,7 +100,7 @@ vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
 	hidden = false,
 	find_command = {
-	    "fd", ".", "Documents", "nixos", "f", "--hidden", "--no-ignore"
+	    "fd", ".", "/home/nixos", "f", "--hidden", "--no-ignore"
 	}
     })
 end)
