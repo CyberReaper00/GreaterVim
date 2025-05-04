@@ -57,6 +57,7 @@ require("telescope").setup({
 ------------------------------- Custom Homepage -------------------------------
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
+	vim.g.neovide_scale_factor = 1.1
 	vim.cmd("enew")
 	vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
 	vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
@@ -69,10 +70,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	    "╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║ ╚████╔╝ ██║██║ ╚═╝ ██║",
 	    " ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
 	    "The Greatest a Vim could be",
-	    "",
-	    "",
-	    "",
-	    "",
+	    "", "", "", "",
 	}
 
 	local pad_lines = math.floor((vim.o.lines - #banner) / 2)
@@ -89,6 +87,25 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	end
 
 	vim.cmd("normal! gg")
+
+	vim.api.nvim_create_autocmd("BufUnload", {
+	    buffer = 0,
+	    callback = function()
+		vim.g.neovide_scale_factor = 0.8
+	    end,
+	})
+
+	vim.api.nvim_buf_set_keymap(0, "n", "<Esc>", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "i", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "a", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "o", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_create_autocmd("InsertEnter", {
+	    buffer = 0,
+	    once = true,
+	    callback = function()
+		vim.cmd("enew")
+	    end
+	})
     end
 })
 
@@ -96,12 +113,32 @@ vim.api.nvim_create_autocmd("VimEnter", {
 
 local scope = require("telescope.builtin")
 
+local search_params = function(filenames, dirnames)
+    local args = {"fd", "--type", "f", "--hidden", "--no-ignore"}
+
+    for _, name in ipairs(filenames) do
+	table.insert(args, "--type")
+	table.insert(args, "f")
+	table.insert(args, "--exclude")
+	table.insert(args, name)
+    end
+    for _, name in ipairs(dirnames) do
+	table.insert(args, "--type")
+	table.insert(args, "d")
+	table.insert(args, "--exclude")
+	table.insert(args, name)
+    end
+    return args
+end
+
+local scope = require("telescope.builtin")
+local exc_dirs = {".cache", ".config", ".local", ".git", "firefox", "Pictures", "pythonProject", ".ollama", "Music", "go/pkg", "Documents/Veracity Files/Documents"}
+local exc_files = {".gitignore", ".gitconfig"}
+
 vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
 	hidden = false,
-	find_command = {
-	    "fd", ".", "/home/nixos", "f", "--hidden", "--no-ignore"
-	}
+	find_command = search_params(exc_files, exc_dirs)
     })
 end)
 
