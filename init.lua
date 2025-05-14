@@ -59,65 +59,130 @@ require("telescope").setup({
 })
 
 ------------------------------- Custom Homepage -------------------------------
+vim.api.nvim_create_user_command("HP", function()
+    vim.cmd("enew")
+    vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
+    vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
+
+    local banner = {
+	" ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███▅╗ ▅███╗",
+	"▅▅╔════  ▅▅▅▅▅▅▃╗▅▅▅▅▅▅╗ ▅▅▅▅▅▅▅╗ ══▅▅╔══ ▅▅▅▅▅▅╗ ▅▅▅▅▅▅▃╗▅▅╗   ▅▅╗▅▅╗▅▅╔▅▅▅▅╔▅▅╗",
+	"██║  ███╗██╔══██║██╔═══╝ ██╔══██║   ██║   ██╔═══╝ ██╔══██║ ██╗ ██╔╝██║██║╚██╔╝██║",
+	"╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
+	" ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+	"The Greatest a Vim could be",
+	"", "", "", ""
+    }
+
+    local win_width = vim.o.columns
+    local pad_lines = math.floor((vim.o.lines - #banner) / 2)
+    for _ = 1, pad_lines do
+	vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
+    end
+
+    for _, line in ipairs(banner) do
+	local line_width = vim.fn.strdisplaywidth(line)
+	local padding = math.floor((win_width - line_width) / 2)
+	local padded_line = string.rep(" ", padding) .. line
+	vim.api.nvim_buf_set_lines(0, -1, -1, false, {padded_line})
+    end
+
+    vim.cmd("normal! gg")
+
+    vim.api.nvim_create_autocmd("BufUnload", {
+	buffer = 0,
+	callback = function()
+	    vim.g.neovide_scale_factor = 0.8
+	end,
+    })
+
+    vim.api.nvim_buf_set_keymap(0, "n", "<Esc>", ":enew<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, "n", "i", ":enew<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, "n", "a", ":enew<CR>", { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, "n", "o", ":enew<CR>", { noremap = true, silent = true })
+    vim.api.nvim_create_autocmd("InsertEnter", {
+	buffer = 0,
+	once = true,
+	callback = function()
+	    vim.cmd("enew")
+	end
+    })
+end, {})
+
+vim.api.nvim_create_autocmd("VimLeave", {
+    callback = function()
+	vim.g.neovide_scale_factor = 1.1
+    end,
+})
+
 vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
 	vim.defer_fn(function()
 	    vim.g.neovide_scale_factor = 1.1
-	    vim.cmd("enew")
-	    vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
-	    vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
-	    
-	    local banner = {
-		" ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███▅╗ ▅███╗",
-		"▅▅╔════  ▅▅▅▅▅▅▃╗▅▅▅▅▅▅╗ ▅▅▅▅▅▅▅╗ ══▅▅╔══ ▅▅▅▅▅▅╗ ▅▅▅▅▅▅▃╗▅▅╗   ▅▅╗▅▅╗▅▅╔▅▅▅▅╔▅▅╗",
-		"██║  ███╗██╔══██║██╔═══╝ ██╔══██║   ██║   ██╔═══╝ ██╔══██║ ██╗ ██╔╝██║██║╚██╔╝██║",
-		"╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
-		" ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
-		"The Greatest a Vim could be",
-		"", "", "", ""
-	    }
+	    vim.defer_fn(function()
+		vim.cmd("HP")
+	    end, 100)
+	end, 10)
+    end,
+})
 
-	    local pad_lines = math.floor((vim.o.lines - #banner) / 2)
-	    for _ = 1, pad_lines do
-		vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
+--[[
+vim.api.nvim_create_autocmd("VimEnter", {
+    callback = function()
+	vim.cmd("enew")
+	vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
+	vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
+
+	local banner = {
+	    " ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███▅╗ ▅███╗",
+	    "▅▅╔════  ▅▅▅▅▅▅▃╗▅▅▅▅▅▅╗ ▅▅▅▅▅▅▅╗ ══▅▅╔══ ▅▅▅▅▅▅╗ ▅▅▅▅▅▅▃╗▅▅╗   ▅▅╗▅▅╗▅▅╔▅▅▅▅╔▅▅╗",
+	    "██║  ███╗██╔══██║██╔═══╝ ██╔══██║   ██║   ██╔═══╝ ██╔══██║ ██╗ ██╔╝██║██║╚██╔╝██║",
+	    "╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
+	    " ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
+	    "The Greatest a Vim could be",
+	    "", "", "", ""
+	}
+
+	local win_width = vim.o.columns
+	local pad_lines = math.floor((vim.o.lines - #banner) / 2)
+	for _ = 1, pad_lines do
+	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
+	end
+
+	for _, line in ipairs(banner) do
+	    local line_width = vim.fn.strdisplaywidth(line)
+	    local padding = math.floor((win_width - line_width) / 2)
+	    local padded_line = string.rep(" ", padding) .. line
+	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {padded_line})
+	end
+
+	vim.cmd("normal! gg")
+
+	vim.api.nvim_create_autocmd("BufUnload", {
+	    buffer = 0,
+	    callback = function()
+		vim.g.neovide_scale_factor = 0.8
+	    end,
+	})
+
+	vim.api.nvim_buf_set_keymap(0, "n", "<Esc>", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "i", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "a", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_buf_set_keymap(0, "n", "o", ":enew<CR>", { noremap = true, silent = true })
+	vim.api.nvim_create_autocmd("InsertEnter", {
+	    buffer = 0,
+	    once = true,
+	    callback = function()
+		vim.cmd("enew")
 	    end
-
-	    local win_width = vim.o.columns
-	    for _, line in ipairs(banner) do
-		local line_width = vim.fn.strdisplaywidth(line)
-		local padding = math.floor((win_width - line_width) / 2)
-		local padded_line = string.rep(" ", padding) .. line
-		vim.api.nvim_buf_set_lines(0, -1, -1, false, {padded_line})
-	    end
-
-	    vim.cmd("normal! gg")
-
-	    vim.api.nvim_create_autocmd("BufUnload", {
-		buffer = 0,
-		callback = function()
-		    vim.g.neovide_scale_factor = 0.8
-		end,
-	    })
-
-	    vim.api.nvim_buf_set_keymap(0, "n", "<Esc>", ":enew<CR>", { noremap = true, silent = true })
-	    vim.api.nvim_buf_set_keymap(0, "n", "i", ":enew<CR>", { noremap = true, silent = true })
-	    vim.api.nvim_buf_set_keymap(0, "n", "a", ":enew<CR>", { noremap = true, silent = true })
-	    vim.api.nvim_buf_set_keymap(0, "n", "o", ":enew<CR>", { noremap = true, silent = true })
-	    vim.api.nvim_create_autocmd("InsertEnter", {
-		buffer = 0,
-		once = true,
-		callback = function()
-		    vim.cmd("enew")
-		end
-	    })
-	end, 50)
+	})
     end
 })
+]]--
 
 ------------------------------- Plugin Bindings -------------------------------
 
 require('lualine').setup()
-
 local scope = require("telescope.builtin")
 
 local search_params = function(filenames, dirnames)
@@ -138,7 +203,6 @@ local search_params = function(filenames, dirnames)
     return args
 end
 
-local scope = require("telescope.builtin")
 local exc_dirs = {".cache", ".local", ".git", "firefox", "Pictures", "pythonProject", ".ollama", "Music", "go/pkg", "Documents/Veracity Files/Documents"}
 local exc_files = {".gitignore", ".gitconfig"}
 
@@ -148,8 +212,6 @@ vim.keymap.set("n", "<leader>f", function()
 	find_command = search_params(exc_files, exc_dirs)
     })
 end)
-
-vim.g.neovide_scale_factor = 0.8
 
 vim.keymap.set("n", "<C-=>", function()
     vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
