@@ -36,17 +36,18 @@ vim.opt.clipboard:append("unnamedplus")
 --=== Setup lazy.nvim ===
 require("lazy").setup({
     spec = {
-	{"rebelot/kanagawa.nvim", config = function() vim.cmd.colorscheme "kanagawa" end},
+	{ "rebelot/kanagawa.nvim", config = function() vim.cmd.colorscheme "kanagawa" end },
 	{
 	    "nvim-telescope/telescope.nvim", tag = "0.1.8",
 	    dependencies = {"nvim-lua/plenary.nvim"}
 	},
-	{"ThePrimeagen/vim-be-good"},
-	{"nvim-treesitter/nvim-treesitter"},
+	{ "ThePrimeagen/vim-be-good" },
+	{ "nvim-treesitter/nvim-treesitter" },
 	{
 	    'nvim-lualine/lualine.nvim',
 	    dependencies = { 'nvim-tree/nvim-web-devicons' }
-	}
+	},
+	{ 'tpope/vim-fugitive' }
     },
 
     checker = {enabled = true},
@@ -71,10 +72,10 @@ vim.api.nvim_create_user_command("HP", function()
 	"╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
 	" ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
 	"The Greatest a Vim could be",
-	"", "", "", ""
+	"", "", "", "", "", "", "", "", "", "", "", "", ""
     }
 
-    local win_width = vim.o.columns
+    local win_width = vim.o.columns / 1.35
     local pad_lines = math.floor((vim.o.lines - #banner) / 2)
     for _ = 1, pad_lines do
 	vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
@@ -109,80 +110,115 @@ vim.api.nvim_create_user_command("HP", function()
     })
 end, {})
 
-vim.api.nvim_create_autocmd("VimLeave", {
+vim.api.nvim_create_autocmd("VimEnter", {
     callback = function()
 	vim.g.neovide_scale_factor = 1.1
+	vim.cmd("HP")
     end,
 })
 
-vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-	vim.defer_fn(function()
-	    vim.g.neovide_scale_factor = 1.1
-	    vim.defer_fn(function()
-		vim.cmd("HP")
-	    end, 100)
-	end, 10)
-    end,
-})
-
---[[
-vim.api.nvim_create_autocmd("VimEnter", {
-    callback = function()
-	vim.cmd("enew")
-	vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
-	vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
-
-	local banner = {
-	    " ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███▅╗ ▅███╗",
-	    "▅▅╔════  ▅▅▅▅▅▅▃╗▅▅▅▅▅▅╗ ▅▅▅▅▅▅▅╗ ══▅▅╔══ ▅▅▅▅▅▅╗ ▅▅▅▅▅▅▃╗▅▅╗   ▅▅╗▅▅╗▅▅╔▅▅▅▅╔▅▅╗",
-	    "██║  ███╗██╔══██║██╔═══╝ ██╔══██║   ██║   ██╔═══╝ ██╔══██║ ██╗ ██╔╝██║██║╚██╔╝██║",
-	    "╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
-	    " ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
-	    "The Greatest a Vim could be",
-	    "", "", "", ""
-	}
-
-	local win_width = vim.o.columns
-	local pad_lines = math.floor((vim.o.lines - #banner) / 2)
-	for _ = 1, pad_lines do
-	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
-	end
-
-	for _, line in ipairs(banner) do
-	    local line_width = vim.fn.strdisplaywidth(line)
-	    local padding = math.floor((win_width - line_width) / 2)
-	    local padded_line = string.rep(" ", padding) .. line
-	    vim.api.nvim_buf_set_lines(0, -1, -1, false, {padded_line})
-	end
-
-	vim.cmd("normal! gg")
-
-	vim.api.nvim_create_autocmd("BufUnload", {
-	    buffer = 0,
-	    callback = function()
-		vim.g.neovide_scale_factor = 0.8
-	    end,
-	})
-
-	vim.api.nvim_buf_set_keymap(0, "n", "<Esc>", ":enew<CR>", { noremap = true, silent = true })
-	vim.api.nvim_buf_set_keymap(0, "n", "i", ":enew<CR>", { noremap = true, silent = true })
-	vim.api.nvim_buf_set_keymap(0, "n", "a", ":enew<CR>", { noremap = true, silent = true })
-	vim.api.nvim_buf_set_keymap(0, "n", "o", ":enew<CR>", { noremap = true, silent = true })
-	vim.api.nvim_create_autocmd("InsertEnter", {
-	    buffer = 0,
-	    once = true,
-	    callback = function()
-		vim.cmd("enew")
-	    end
-	})
+------------------------------- Custom lualine function -------------------------------
+local function file_size()
+    local filepath = vim.api.nvim_buf_get_name(0)
+    if filepath == "" then
+	return ""
     end
-})
-]]--
+
+    local size_bytes = vim.fn.getfsize(filepath)
+    local units = {"B", "KB", "GB"}
+    local i = 1
+    while size_bytes >= 1024 and i <= #units do
+	size_bytes = size_bytes / 1024
+	i = i + 1
+    end
+
+    return string.format('%.2f %s', size_bytes, units[i])
+end
+
+---------- Defining new theme
+
+---------- Custom function for theming
+local new_theme = require('lualine.themes.auto')
+new_theme.normal.a = new_theme.normal.a or {}
+new_theme.normal.x = new_theme.normal.x or {}
+new_theme.normal.z = new_theme.normal.z or {}
+
+new_theme.insert = new_theme.insert or {}
+new_theme.insert.a = new_theme.insert.a or {}
+new_theme.insert.x = new_theme.insert.x or {}
+new_theme.insert.z = new_theme.insert.z or {}
+
+new_theme.visual = new_theme.visual or {}
+new_theme.visual.a = new_theme.visual.a or {}
+new_theme.visual.x = new_theme.visual.x or {}
+new_theme.visual.z = new_theme.visual.z or {}
+
+new_theme.replace = new_theme.replace or {}
+new_theme.replace.a = new_theme.replace.a or {}
+new_theme.replace.x = new_theme.replace.x or {}
+new_theme.replace.z = new_theme.replace.z or {}
+
+color = function()
+  local mode = vim.fn.mode()
+  local mode_colors = {
+    normal = { fg = new_theme.normal.x.fg, bg = new_theme.normal.x.bg },
+    insert = { fg = new_theme.insert.x.fg, bg = new_theme.insert.x.bg },
+    visual = { fg = new_theme.visual.x.fg, bg = new_theme.visual.x.bg },
+    replace = { fg = new_theme.replace.x.fg, bg = new_theme.replace.x.bg },
+  }
+  return mode_colors[mode] or mode_colors.normal -- Fallback to normal if mode not defined
+end
+
+---------- Coloring each section in each mode
+
+---------- Section A
+new_theme.normal.a.fg = "#FFFFFF"
+new_theme.normal.a.bg = "#2A447A"
+
+new_theme.insert.a.fg = "#FFFFFF"
+new_theme.insert.a.bg = "#556D37"
+
+new_theme.visual.a.fg = "#FFFFFF"
+new_theme.visual.a.bg = "#4D3C67"
+
+new_theme.replace.a.fg = "#FFFFFF"
+new_theme.replace.a.bg = "#9B4008"
+
+---------- Section X
+new_theme.normal.x.fg = "#7B98D2"
+new_theme.normal.x.bg = "#242433"
+
+---------- Section Z
+new_theme.normal.z.fg = "#000000"
+new_theme.normal.z.bg = "#7B98D2"
+
+new_theme.insert.z.fg = "#000000"
+new_theme.insert.z.bg = "#92B368"
+
+new_theme.visual.z.fg = "#000000"
+new_theme.visual.z.bg = "#907BB2"
+
+new_theme.replace.z.fg = "#000000"
+new_theme.replace.z.bg = "#F79B63"
 
 ------------------------------- Plugin Bindings -------------------------------
+require('lualine').setup {
+    options = { theme = new_theme },
+    sections = {
+	lualine_x = {
+	    'encoding',
+	    'fileformat',
+	    { 'filetype', color },
+	    file_size,
+	},
+	lualine_y = { '' },
+	lualine_z = {
+	    'progress',
+	    'location',
+	},
+    },
+}
 
-require('lualine').setup()
 local scope = require("telescope.builtin")
 
 local search_params = function(filenames, dirnames)
@@ -284,6 +320,7 @@ nmap("<leader>t", ":term<CR>", 0)
 nmap("<leader>S", ":30vnew<CR>", 0)
 nmap("<leader>h", ":vert resize 30<CR>", 0)
 nmap("<leader>n", ":tabnew<CR>", 0)
+nmap("<leader>k", "J", 0)
 vim.keymap.set("t", "<leader><Esc>", "<C-\\><C-n>")
 
 --=== Movement remaps ===
@@ -307,7 +344,6 @@ nmap("G", "Gzz", 0)
 --=== Editing remaps ===
 nmap("<C-a>", 'ggVG', 0)
 nmap("<leader>a", 'ggVG"+y', 0)
-nmap(";", "R", 0)
 nmap("y", '"+y', 0)
 nmap("d", '"+d', 0)
 nmap("s", '"+s', 0)
@@ -316,12 +352,21 @@ nmap("dH", "d^", 0)
 nmap("<M-B>", "<C-w>", 1)
 nmap("<M-b>", "<BS>", 1)
 nmap("<C-v>", "<C-r>+", 1)
-nmap("p", '"+p')
+nmap("p", '"+p', 0)
+nmap(";", '^v$h"+y', 0)
+nmap("<M-'>", "`", 1)
+
+--=== Auto-containers ===
+nmap('"', '""<Esc>ha', 1)
+nmap("'", "''<Esc>ha", 1)
+nmap("{", "{}<Esc>ha", 1)
+nmap("(", "()<Esc>ha", 1)
+nmap("[", "[]<Esc>ha", 1)
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>", 0)
 nmap("<A-S-w>", "*", 0)
-nmap('"', "%", 0)
+nmap('<M-;>', "%", 0)
 wait_map("f")
 wait_map("F")
 
