@@ -53,9 +53,15 @@ require("lazy").setup({
     checker = {enabled = true},
 })
 
+local actions = require("telescope.actions")
 require("telescope").setup({
     defaults = {
 	path_display = {"truncate"},
+	mappings = {
+	    n = {
+		["X"] = actions.delete_buffer,
+	    },
+	},
     },
 })
 
@@ -221,31 +227,15 @@ require('lualine').setup {
 
 local scope = require("telescope.builtin")
 
-local search_params = function(filenames, dirnames)
-    local args = {"fd", "--type", "f", "--hidden", "--no-ignore"}
-
-    for _, name in ipairs(filenames) do
-	table.insert(args, "--type")
-	table.insert(args, "f")
-	table.insert(args, "--exclude")
-	table.insert(args, name)
-    end
-    for _, name in ipairs(dirnames) do
-	table.insert(args, "--type")
-	table.insert(args, "d")
-	table.insert(args, "--exclude")
-	table.insert(args, name)
-    end
-    return args
-end
-
+--[[
 local exc_dirs = {".cache", ".local", ".git", "firefox", "Pictures", "pythonProject", ".ollama", "Music", "go/pkg", "Documents/Veracity Files/Documents"}
 local exc_files = {".gitignore", ".gitconfig"}
+]]
 
 vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
 	hidden = false,
-	find_command = search_params(exc_files, exc_dirs)
+	find_command = rg --files --hidden,
     })
 end)
 
@@ -322,6 +312,8 @@ nmap("<leader>h", ":vert resize 30<CR>", 0)
 nmap("<leader>n", ":tabnew<CR>", 0)
 nmap("<leader>k", "J", 0)
 vim.keymap.set("t", "<leader><Esc>", "<C-\\><C-n>")
+nmap("<leader>b", ":Telescope buffers<CR>", 0)
+nmap("<leader>=", "^V%=", 0)
 
 --=== Movement remaps ===
 nmap("k","kzz", 0)
@@ -355,6 +347,7 @@ nmap("<C-v>", "<C-r>+", 1)
 nmap("p", '"+p', 0)
 nmap(";", '^v$h"+y', 0)
 nmap("<M-'>", "`", 1)
+nmap("d;", "V%d", 0)
 
 --=== Auto-containers ===
 nmap('"', '""<Esc>ha', 1)
@@ -362,6 +355,7 @@ nmap("'", "''<Esc>ha", 1)
 nmap("{", "{}<Esc>ha", 1)
 nmap("(", "()<Esc>ha", 1)
 nmap("[", "[]<Esc>ha", 1)
+nmap("//", "/*  */<Esc>hha", 1)
 
 --=== Searching remaps ===
 nmap("<Esc>", ":noh<CR>", 0)
