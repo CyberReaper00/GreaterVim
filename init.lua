@@ -29,6 +29,7 @@ vim.o.splitright = true
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.shiftwidth = 4
+vim.opt.tabstop = 4
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
 vim.opt.clipboard:append("unnamedplus")
@@ -66,10 +67,18 @@ require("telescope").setup({
 })
 
 ------------------------------- Custom Homepage -------------------------------
+
+scale	  = 2.4
+alignment = 1
 vim.api.nvim_create_user_command("HP", function()
     vim.cmd("enew")
     vim.cmd("setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile")
     vim.cmd("setlocal nonumber norelativenumber nocursorline nospell")
+
+    if vim.g.neovide then
+	scale	  = 3.5
+	alignment = 1.35
+    end
 
     local banner = {
 	" ██████╗ ██████╗ ███████╗ █████╗ ████████╗███████╗██████╗ ██╗   ██╗██╗███▅╗ ▅███╗",
@@ -78,11 +87,10 @@ vim.api.nvim_create_user_command("HP", function()
 	"╚██████╔╝██║  ██║███████╗██║  ██║   ██║   ███████╗██║  ██║  ████╔╝ ██║██║ ╚═╝ ██║",
 	" ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═╝   ╚═╝   ╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚═╝╚═╝     ╚═╝",
 	"The Greatest a Vim could be",
-	"", "", "", "", "", "", "", "", "", "", "", "", ""
     }
 
-    local win_width = vim.o.columns / 1.35
-    local pad_lines = math.floor((vim.o.lines - #banner) / 2)
+    local win_width = vim.o.columns / alignment
+    local pad_lines = math.floor((vim.o.lines - #banner) / scale)
     for _ = 1, pad_lines do
 	vim.api.nvim_buf_set_lines(0, -1, -1, false, {""})
     end
@@ -123,7 +131,7 @@ vim.api.nvim_create_autocmd("VimEnter", {
     end,
 })
 
-------------------------------- Custom lualine function -------------------------------
+------------------------------- Custom lualine settings -------------------------------
 local function file_size()
     local filepath = vim.api.nvim_buf_get_name(0)
     if filepath == "" then
@@ -144,22 +152,22 @@ end
 ---------- Defining new theme
 
 ---------- Custom function for theming
-local new_theme = require('lualine.themes.auto')
+local new_theme    = require('lualine.themes.auto')
 new_theme.normal.a = new_theme.normal.a or {}
 new_theme.normal.x = new_theme.normal.x or {}
 new_theme.normal.z = new_theme.normal.z or {}
 
-new_theme.insert = new_theme.insert or {}
+new_theme.insert   = new_theme.insert or {}
 new_theme.insert.a = new_theme.insert.a or {}
 new_theme.insert.x = new_theme.insert.x or {}
 new_theme.insert.z = new_theme.insert.z or {}
 
-new_theme.visual = new_theme.visual or {}
+new_theme.visual   = new_theme.visual or {}
 new_theme.visual.a = new_theme.visual.a or {}
 new_theme.visual.x = new_theme.visual.x or {}
 new_theme.visual.z = new_theme.visual.z or {}
 
-new_theme.replace = new_theme.replace or {}
+new_theme.replace   = new_theme.replace or {}
 new_theme.replace.a = new_theme.replace.a or {}
 new_theme.replace.x = new_theme.replace.x or {}
 new_theme.replace.z = new_theme.replace.z or {}
@@ -167,16 +175,15 @@ new_theme.replace.z = new_theme.replace.z or {}
 color = function()
   local mode = vim.fn.mode()
   local mode_colors = {
-    normal = { fg = new_theme.normal.x.fg, bg = new_theme.normal.x.bg },
-    insert = { fg = new_theme.insert.x.fg, bg = new_theme.insert.x.bg },
-    visual = { fg = new_theme.visual.x.fg, bg = new_theme.visual.x.bg },
+    normal  = { fg = new_theme.normal.x.fg, bg = new_theme.normal.x.bg },
+    insert  = { fg = new_theme.insert.x.fg, bg = new_theme.insert.x.bg },
+    visual  = { fg = new_theme.visual.x.fg, bg = new_theme.visual.x.bg },
     replace = { fg = new_theme.replace.x.fg, bg = new_theme.replace.x.bg },
   }
   return mode_colors[mode] or mode_colors.normal -- Fallback to normal if mode not defined
 end
 
 ---------- Coloring each section in each mode
-
 ---------- Section A
 new_theme.normal.a.fg = "#FFFFFF"
 new_theme.normal.a.bg = "#2A447A"
@@ -226,12 +233,6 @@ require('lualine').setup {
 }
 
 local scope = require("telescope.builtin")
-
---[[
-local exc_dirs = {".cache", ".local", ".git", "firefox", "Pictures", "pythonProject", ".ollama", "Music", "go/pkg", "Documents/Veracity Files/Documents"}
-local exc_files = {".gitignore", ".gitconfig"}
-]]
-
 vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
 	hidden = false,
@@ -258,26 +259,31 @@ ts_config.setup({
     indent = {enable = true}
 })
 ------------------------------- Global Bindings -------------------------------
-
 ---------------- Set keymap function ----------------
-local m0 = {"n", "v"}
-local m1 = {"t", "i"}
+local function split(istr, sep)
+    if sep == nil then
+	sep = "%s"
+    end
 
-local nmap = function(lhs, rhs, type)
-    if type == 0 then
-	for _, mode in ipairs(m0) do
-	    vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
-	end
-    elseif type == 1 then
-	for _, mode in ipairs(m1) do
-	    vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
-	end
+    local t = {}
+    for str in string.gmatch(istr, "([^"..sep.."]+)") do
+	table.insert(t, str)
+    end
+
+    return t
+end
+
+local nmap = function(lhs, rhs, modes)
+    local mode_arr = split(modes, " ")
+    for _, mode in ipairs(mode_arr) do
+	vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
     end
 end
 
 ---------------- Search timer function ----------------
-local wait_map = function(key)
-    for _, mode in ipairs(m0) do
+local wait_map = function(key, modes)
+    local mode_arr = split(modes, " ")
+    for _, mode in ipairs(mode_arr) do
 	vim.keymap.set(mode, key, function()
 	    if key == "f" then
 		vim.api.nvim_feedkeys("/", mode, true)
@@ -295,74 +301,73 @@ local wait_map = function(key)
 end
 
 --=== Leader-key remaps ===
-nmap("<leader>s", ":w<CR>", 0)
-nmap("<leader>q", ":q<CR>", 0)
-nmap("<leader>r", ":source %<CR>", 0)
-nmap("<leader>L", ":Lazy<CR>", 0)
-nmap("<leader>e", '"+yiw', 0)
-nmap("<leader>p", 'viw"+p', 0)
-nmap("<leader>l", "<C-v>", 0)
-nmap("<leader>j", "<C-^>", 0)
-nmap("<leader>i", "gt", 0)
-nmap("<leader>w", "<C-w>h", 0)
-nmap("<leader>o", "<C-w>l", 0)
-nmap("<leader>t", ":term<CR>", 0)
-nmap("<leader>S", ":30vnew<CR>", 0)
-nmap("<leader>h", ":vert resize 30<CR>", 0)
-nmap("<leader>n", ":tabnew<CR>", 0)
-nmap("<leader>k", "J", 0)
-vim.keymap.set("t", "<leader><Esc>", "<C-\\><C-n>")
-nmap("<leader>b", ":Telescope buffers<CR>", 0)
-nmap("<leader>=", "^V%=", 0)
+nmap("<leader>s",	":w<CR>",	"n v")
+nmap("<leader>q",	":q<CR>",	"n v")
+nmap("<leader>r",	":so<CR>",	"n v")
+nmap("<leader>L",	":Lazy<CR>",	"n v")
+nmap("<leader>e",	'"+yiw',	"n v")
+nmap("<leader>p",	'viw"+p',	"n v")
+nmap("<leader>v",	"<C-v>",	"n v")
+nmap("<leader>j",	"<C-^>",	"n v")
+nmap("<leader>i",	"gt",		"n v")
+nmap("<leader>w",	"<C-w>h",	"n v")
+nmap("<leader>o",	"<C-w>l",	"n v")
+nmap("<leader>t",	":term<CR>",	"n v")
+nmap("<leader>n",	":tabnew<CR>",	"n v")
+nmap("<leader>k",	"J",		"n v")
+nmap("<leader>=",	"^V%=",		"n v")
+nmap("<leader><Esc>",	"<C-\\><C-n>",	"t")
+nmap("<leader>b",	":Telescope buffers<CR>",	"n v")
 
 --=== Movement remaps ===
-nmap("k","kzz", 0)
-nmap("j", "jzz", 0)
-nmap("K", "<C-u>zz", 0)
-nmap("J", "<C-d>zz", 0)
-nmap("a", "i", 0)
-nmap("A", "I", 0)
-nmap("i", "a", 0)
-nmap("I", "A", 0)
-nmap("H", "^", 0)
-nmap("L", "$", 0)
-vim.keymap.set("v", "L", "$h")
-nmap("n", "nzz", 0)
-nmap("N", "Nzz", 0)
-nmap("M", "`", 0)
-nmap("gg", "ggzz", 0)
-nmap("G", "Gzz", 0)
+nmap("k",	"kzz",		"n v")
+nmap("j",	"jzz",		"n v")
+nmap("K",	"<C-u>zz",	"n v")
+nmap("J",	"<C-d>zz",	"n v")
+nmap("a",	"i",		"n v")
+nmap("A",	"I",		"n v")
+nmap("i",	"a",		"n v")
+nmap("I",	"A",		"n v")
+nmap("H",	"^",		"n v")
+nmap("L",	"$",		"n v")
+nmap("L",	"$h",		"v")
+nmap("n",	"nzz",		"n v")
+nmap("N",	"Nzz",		"n v")
+nmap("M",	"`",		"n v")
+nmap("gg",	"ggzz",		"n v")
+nmap("G",	"Gzz",		"n v")
 
 --=== Editing remaps ===
-nmap("<C-a>", 'ggVG', 0)
-nmap("<leader>a", 'ggVG"+y', 0)
-nmap("y", '"+y', 0)
-nmap("d", '"+d', 0)
-nmap("s", '"+s', 0)
-nmap("U", "<C-r>", 0)
-nmap("dH", "d^", 0)
-nmap("<M-B>", "<C-w>", 1)
-nmap("<M-b>", "<BS>", 1)
-nmap("<C-v>", "<C-r>+", 1)
-nmap("p", '"+p', 0)
-nmap(";", '^v$h"+y', 0)
-nmap("<M-'>", "`", 1)
-nmap("d;", "V%d", 0)
+nmap("<C-a>",	'ggVG',		"n v")
+nmap("<leader>a", 'ggVG"+y',	"n v")
+nmap("y",	'"+y',		"n v")
+nmap("d",	'"+d',		"n v")
+nmap("s",	'"+s',		"n v")
+nmap("U",	"<C-r>",	"n v")
+nmap("dH",	"d^",		"n v")
+nmap("<M-B>",	"<C-w>",	"i t")
+nmap("<M-b>",	"<BS>",		"i t")
+nmap("<C-v>",	"<C-r>+",	"i t")
+nmap("p",	'"+p',		"n v")
+nmap(";",	'^v$h"+y',	"n v")
+nmap("<M-'>",	"`",		"i t")
+nmap("d;",	"V%d",		"n v")
 
 --=== Auto-containers ===
-nmap('"', '""<Esc>ha', 1)
-nmap("'", "''<Esc>ha", 1)
-nmap("{", "{}<Esc>ha", 1)
-nmap("(", "()<Esc>ha", 1)
-nmap("[", "[]<Esc>ha", 1)
-nmap("//", "/*  */<Esc>hha", 1)
+nmap('"',	'""<Esc>ha',	"i t")
+nmap("'",	"''<Esc>ha",	"i t")
+nmap("{",	"{}<Esc>ha",	"i t")
+nmap("(",	"()<Esc>ha",	"i t")
+nmap("[",	"[]<Esc>ha",	"i t")
+nmap("`",	"/*  */<Esc>hha","i")
 
 --=== Searching remaps ===
-nmap("<Esc>", ":noh<CR>", 0)
-nmap("<A-S-w>", "*", 0)
-nmap('<M-;>', "%", 0)
-wait_map("f")
-wait_map("F")
+nmap("<Esc>", ":noh<CR>",	"n v")
+nmap("<A-S-w>", "*",		"n v")
+nmap('<M-;>', "%",		"n v")
+
+wait_map("f",			"n v")
+wait_map("F",			"n v")
 
 --=== Something to try out ===
 vim.cmd([[
