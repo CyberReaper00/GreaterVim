@@ -57,12 +57,12 @@ require("lazy").setup({
 local actions = require("telescope.actions")
 require("telescope").setup({
     defaults = {
-	path_display = {"truncate"},
-	mappings = {
-	    n = {
-		["X"] = actions.delete_buffer,
-	    },
-	},
+		path_display = {"truncate"},
+		mappings = {
+			n = {
+				["X"] = actions.delete_buffer,
+			},
+		},
     },
 })
 
@@ -217,18 +217,18 @@ new_theme.replace.z.bg = "#F79B63"
 ------------------------------- Plugin Bindings -------------------------------
 require('lualine').setup {
     options = { theme = new_theme },
-    sections = {
-	lualine_x = {
-	    'encoding',
-	    'fileformat',
-	    { 'filetype', color },
-	    file_size,
-	},
-	lualine_y = { '' },
-	lualine_z = {
-	    'progress',
-	    'location',
-	},
+	sections = {
+		lualine_x = {
+			'encoding',
+			'fileformat',
+			{ 'filetype', color },
+			file_size,
+		},
+		lualine_y = { '' },
+		lualine_z = {
+			'progress',
+			'location',
+		},
     },
 }
 
@@ -301,21 +301,21 @@ local wait_map = function(key, modes)
 end
 
 --=== Leader-key remaps ===
-nmap("<leader>s",	":w<CR>",	"n v")
-nmap("<leader>q",	":q<CR>",	"n v")
-nmap("<leader>r",	":so<CR>",	"n v")
+nmap("<leader>s",	":w<CR>",		"n v")
+nmap("<leader>q",	":q<CR>",		"n v")
+nmap("<leader>r",	":so<CR>",		"n v")
 nmap("<leader>L",	":Lazy<CR>",	"n v")
-nmap("<leader>e",	'"+yiw',	"n v")
-nmap("<leader>p",	'viw"+p',	"n v")
-nmap("<leader>v",	"<C-v>",	"n v")
-nmap("<leader>j",	"<C-^>",	"n v")
-nmap("<leader>i",	"gt",		"n v")
-nmap("<leader>w",	"<C-w>h",	"n v")
-nmap("<leader>o",	"<C-w>l",	"n v")
+nmap("<leader>e",	'"+yiw',		"n v")
+nmap("<leader>p",	'viw"+p',		"n v")
+nmap("<leader>v",	"<C-v>",		"n v")
+nmap("<leader>j",	"<C-^>",		"n v")
+nmap("<leader>i",	"gt",			"n v")
+nmap("<leader>w",	"<C-w>h",		"n v")
+nmap("<leader>o",	"<C-w>l",		"n v")
 nmap("<leader>t",	":term<CR>",	"n v")
 nmap("<leader>n",	":tabnew<CR>",	"n v")
-nmap("<leader>k",	"J",		"n v")
-nmap("<leader>=",	"^V%=",		"n v")
+nmap("<leader>k",	"J",			"n v")
+nmap("<leader>=",	"^V%=",			"n v")
 nmap("<leader><Esc>",	"<C-\\><C-n>",	"t")
 nmap("<leader>b",	":Telescope buffers<CR>",	"n v")
 
@@ -338,20 +338,20 @@ nmap("gg",	"ggzz",		"n v")
 nmap("G",	"Gzz",		"n v")
 
 --=== Editing remaps ===
-nmap("<C-a>",	'ggVG',		"n v")
-nmap("<leader>a", 'ggVG"+y',	"n v")
-nmap("y",	'"+y',		"n v")
-nmap("d",	'"+d',		"n v")
-nmap("s",	'"+s',		"n v")
-nmap("U",	"<C-r>",	"n v")
-nmap("dH",	"d^",		"n v")
-nmap("<M-B>",	"<C-w>",	"i t")
-nmap("<M-b>",	"<BS>",		"i t")
-nmap("<C-v>",	"<C-r>+",	"i t")
-nmap("p",	'"+p',		"n v")
-nmap(";",	'^v$h"+y',	"n v")
-nmap("<M-'>",	"`",		"i t")
-nmap("d;",	"V%d",		"n v")
+nmap("<C-a>",		'ggVG',		"n v")
+nmap("<leader>a", 	'ggVG"+y',	"n v")
+nmap("y",			'"+y',		"n v")
+nmap("d",			'"+d',		"n v")
+nmap("s",			'"+s',		"n v")
+nmap("U",			"<C-r>",	"n v")
+nmap("dH",			"d^",		"n v")
+nmap("<M-B>",		"<C-w>",	"i t")
+nmap("<M-b>",		"<BS>",		"i t")
+nmap("<C-v>",		"<C-r>+",	"i t")
+nmap("p",			'"+p',		"n v")
+nmap(";",			'^v$h"+y',	"n v")
+nmap("<M-'>",		"`",		"i t")
+nmap("d;",			"V%d",		"n v")
 
 --=== Auto-containers ===
 nmap('"',	'""<Esc>ha',	"i t")
@@ -362,12 +362,12 @@ nmap("[",	"[]<Esc>ha",	"i t")
 nmap("`",	"/*  */<Esc>hha","i")
 
 --=== Searching remaps ===
-nmap("<Esc>", ":noh<CR>",	"n v")
-nmap("<A-S-w>", "*",		"n v")
-nmap('<M-;>', "%",		"n v")
+nmap("<Esc>", 	":noh<CR>",	"n v")
+nmap("<M-w>", "*zz",		"n v")
+nmap('<M-;>', 	"%",		"n v")
 
-wait_map("f",			"n v")
-wait_map("F",			"n v")
+wait_map("f",				"n v")
+wait_map("F",				"n v")
 
 --=== Something to try out ===
 vim.cmd([[
