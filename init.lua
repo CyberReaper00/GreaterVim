@@ -235,9 +235,13 @@ require('lualine').setup {
 local scope = require("telescope.builtin")
 vim.keymap.set("n", "<leader>f", function()
     scope.find_files({
-	hidden = false,
-	find_command = rg --files --hidden,
+		hidden = false,
+		find_command = rg --files --hidden,
     })
+end)
+
+vim.keymap.set("n", "<leader>g", function()
+	scope.live_grep()
 end)
 
 vim.keymap.set("n", "<C-=>", function()
@@ -310,14 +314,13 @@ nmap("<leader>p",	'viw"+p',		"n v")
 nmap("<leader>v",	"<C-v>",		"n v")
 nmap("<leader>j",	"<C-^>",		"n v")
 nmap("<leader>i",	"gt",			"n v")
-nmap("<leader>w",	"<C-w>h",		"n v")
-nmap("<leader>o",	"<C-w>l",		"n v")
 nmap("<leader>t",	":term<CR>",	"n v")
 nmap("<leader>n",	":tabnew<CR>",	"n v")
 nmap("<leader>k",	"J",			"n v")
 nmap("<leader>=",	"^V%=",			"n v")
 nmap("<leader><Esc>",	"<C-\\><C-n>",	"t")
 nmap("<leader>b",	":Telescope buffers<CR>",	"n v")
+nmap("<leader>o",	":Telescope oldfiles<CR>",	"n v")
 
 --=== Movement remaps ===
 nmap("k",	"kzz",		"n v")
