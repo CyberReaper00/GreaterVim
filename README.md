@@ -1,5 +1,5 @@
 # Preface
-I've tried astrovim before, when i was first starting out with nvim, but when i turned it on there were so many plugins that just didnt work and always gave me errors no matter what i did and then on top of that the bindings were completely different from a normal base system that it just became static and i always wondered what i'm supposed to do get faster
+I've tried astrovim before, when i was first starting out with nvim, but when i turned it on there were so many plugins that just didnt work and always gave me errors no matter what i did and then on top of that the bindings were completely different from a normal base system that it just became static in my head and i always wondered what i'm supposed to do to get faster
 
 There was which-key installed and that was supposed to help but what i really wanted was VimTutor but with the astro-bindings so that i can practice the bindings instead of learning them as i went along and since that didnt exist along with all the plugin bugs that i just didnt know how to solve, i just had enough and a week in i went to a stock nvim to get some actual bearings on how everything works
 

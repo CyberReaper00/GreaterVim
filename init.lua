@@ -461,7 +461,7 @@ function recent_tab()
 		vim.api.nvim_feedkeys("gT", "n", false)
 	end
 end
-set("<A-l>", recent_tab,		"t i n")
+set("<A-l>", recent_tab,	"t i n")
 
 ---=== Auto-containers ===---
 set('"',	'""<Esc>ha',	"i")
