@@ -1,20 +1,5 @@
 
----============================ Lazy.nvim Config ============================---
-local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
--- if not (vim.uv or vim.loop).fs_stat(lazypath) then
--- 	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
--- 	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
--- 	if vim.v.shell_error ~= 0 then
--- 		vim.api.nvim_echo({
--- 			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
--- 			{ out, "WarningMsg" },
--- 			{ "\nPress any key to exit..." },
--- 		}, true, {})
--- 		vim.fn.getchar()
--- 		os.exit(1)
--- 	end
--- end
-vim.opt.rtp:prepend(lazypath)
+---============================ Global Options ============================---
 
 --=== Leader-key initialization ===
 vim.g.mapleader = " "
@@ -33,6 +18,12 @@ vim.opt.shiftwidth = 4
 vim.opt.tabstop = 4
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.keywordprg = ":h"
+vim.opt.shell = '/nix/store/avwdl5bnf4xl7nf60vrxxs5q7z39l02k-powershell-7.5.1/bin/pwsh'
+vim.opt.listchars = "space:·,tab:▶∘"
+
+---============================ Lazy.nvim Config ============================---
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
+vim.opt.rtp:prepend(lazypath)
 
 --=== Setup lazy.nvim ===
 require("lazy").setup({
@@ -51,8 +42,6 @@ require("lazy").setup({
 			dependencies = {'nvim-tree/nvim-web-devicons'}
 		}, {
 			'tpope/vim-fugitive'
-		}, {
-			'seandewar/actually-doom.nvim'
 		}
 	},
 
@@ -276,82 +265,6 @@ ts_config.setup({
 	indent = {enable = true}
 })
 
----============================ Zen mode settings ============================
-vim.api.nvim_set_hl(0, 'e_clr', { bg = '#3E1C4A' })
-local padding = 0.15
-
-local function zen()
-	local current_tab = vim.api.nvim_get_current_tabpage()
-	local current_win = vim.api.nvim_get_current_win()
-
-    -- Check if sidebars already exist (by checking for 'buftype=nofile' and empty 'statusline')
-    local zen_windows = {}
-    local main_window_id = nil
-    for _, win_id in ipairs(vim.api.nvim_tabpage_list_wins(current_tab)) do
-        local bufnr = vim.api.nvim_win_get_buf(win_id)
-        local buftype = vim.api.nvim_buf_get_option(bufnr, 'buftype')
-
-        if buftype == 'nofile' then
-            table.insert(zen_windows, win_id)
-        elseif win_id == current_win then
-            main_window_id = win_id -- Keep track of the main window's ID
-        end
-    end
-
-    if #zen_windows >= 2 then
-        -- Sidebars exist, close them
-        for _, win_id in ipairs(zen_windows) do
-            vim.api.nvim_win_close(win_id, true)
-		vim.cmd("set laststatus=3")
-        end
-    else
-        -- Create sidebars
-        local main_win_width = vim.api.nvim_win_get_width(current_win)
-        local sidebar_width = math.floor(main_win_width * padding)
-
-        -- Create right sidebar (will appear to the right of the current window)
-        vim.cmd("vnew")
-		vim.cmd("setlocal winhighlight=Normal:e_clr")
-        local right_win = vim.api.nvim_get_current_win()
-        local right_buf = vim.api.nvim_win_get_buf(right_win)
-        vim.api.nvim_win_set_width(right_win, sidebar_width)
-
-        -- Create left sidebar (move to original window, then split left)
-        vim.api.nvim_set_current_win(main_window_id) -- Move back to main window
-        vim.cmd("vert topleft new")
-		vim.cmd("setlocal winhighlight=Normal:e_clr")
-        local left_win = vim.api.nvim_get_current_win()
-        local left_buf = vim.api.nvim_win_get_buf(left_win)
-        vim.api.nvim_win_set_width(left_win, sidebar_width)
-
-        -- Apply 'silent' options to both new sidebars
-        local function make_silent(win_id, bufnr)
-            vim.api.nvim_win_set_option(win_id, 'number', false)
-            vim.api.nvim_win_set_option(win_id, 'relativenumber', false)
-            vim.api.nvim_win_set_option(win_id, 'signcolumn', 'no')
-            vim.api.nvim_win_set_option(win_id, 'foldcolumn', '0')
-            vim.api.nvim_win_set_option(win_id, 'cursorline', false)
-            vim.api.nvim_win_set_option(win_id, 'cursorcolumn', false)
-
-            vim.api.nvim_buf_set_option(bufnr, 'bufhidden', 'wipe') -- Close buffer when window closes
-            vim.api.nvim_buf_set_option(bufnr, 'buftype', 'nofile') -- Not a real file
-            vim.api.nvim_buf_set_option(bufnr, 'swapfile', false) -- No swap file
-            vim.api.nvim_buf_set_option(bufnr, 'modifiable', false) -- Read-only
-            vim.api.nvim_buf_set_option(bufnr, 'wrap', false) -- No text wrapping
-        end
-
-        make_silent(right_win, right_buf)
-        make_silent(left_win, left_buf)
-
-        -- Return focus to the original main window
-        vim.api.nvim_set_current_win(main_window_id)
-		vim.cmd("set laststatus=0")
-    end
-end
-
-local normal_hl = vim.api.nvim_get_hl_by_name("Normal", true)
-local normal_bg = normal_hl.bg or normal_hl.ctermbg
-
 ---============================ Global Bindings ============================---
 
 ---============ function to set keymaps ============---
@@ -391,6 +304,9 @@ local wait_map = function(key, modes)
 	end
 end
 
+set("<c-;>", ":noh<cr>", "v n c")
+set("<c-;>", "<esc>",	 "i")
+
 ---=== Leader-key remaps ===---
 set("<leader>s",	":w<cr>",		"n v")
 set("<leader>q",	":q<cr>",		"n v")
@@ -404,10 +320,9 @@ set("<leader>t",	":term<cr>",	"n v")
 set("<leader>n",	":tabnew<cr>",	"n v")
 set("<leader>k",	"J",			"n v")
 set("<leader>=",	"^V%=",			"n v")
-set("<leader><Esc>",	"<C-\\><C-n>",	"t")
+set("<leader>[",	"<C-\\><C-n>",	"t")
 set("<leader>b",	":Telescope buffers<cr><esc>",	"n v")
 set("<leader>o",	":Telescope oldfiles<cr>",	"n v")
-set('<leader>z', 	zen, 			"n")
 
 ---=== Movement remaps ===---
 set("k",	"kzz",		"n v")
@@ -440,6 +355,10 @@ set("<A-B>",		"<C-w>",	"i t")
 set("<A-b>",		"<BS>",		"i t")
 set("p",			'"+p',		"n v")
 set("<A-'>",		"`",		"i t")
+set("<Tab>",		">>",		"n")
+set("<S-Tab>",		"<<",		"n")
+set("<Tab>",		">",		"v")
+set("<S-Tab>",		"<",		"v")
 
 ---=== Powermaps ===---
 set(";",	'^v$h"+y',	"n v")
@@ -472,9 +391,9 @@ set("[",	"[]<Esc>ha",	"i")
 set("`",	"/*  */<Esc>hhha","i")
 
 ---=== Searching remaps ===---
-set('<A-;>', 	"%",		"n v")
-set("<A-w>", 	"*zz",		"n v")
-set("<Esc>", 	":noh<cr>",	"n v")
+set("<a-;>", 	"%",		"n v")
+set("<a-w>", 	"*zz",		"n v")
+set("<a-s-w>", 	"#zz",		"n v")
 
 wait_map("f",				"n v")
 wait_map("F",				"n v")
@@ -538,4 +457,3 @@ vim.api.nvim_create_autocmd("FileType", {
 		html_tag("--sn", "<span>", "</span>", ev.buf)
 	end,
 })
-
