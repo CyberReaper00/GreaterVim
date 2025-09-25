@@ -240,21 +240,12 @@ local scope = require("telescope.builtin")
 vim.keymap.set("n", "<leader>f", function()
 	scope.find_files({
 		hidden = true,
-		find_command = rg --files --hidden,
+		find_command = {"fd", "-H", "-p", "--no-ignore", ".", "nixos"}
 	})
 end)
 
 vim.keymap.set("n", "<leader>g", function()
 	scope.live_grep()
-end)
-
------------------ Neovide
-vim.keymap.set("n", "<C-=>", function()
-	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor + 0.1
-end)
-
-vim.keymap.set("n", "<C-->", function()
-	vim.g.neovide_scale_factor = vim.g.neovide_scale_factor - 0.1
 end)
 
 ----------------- Treesitter
@@ -377,7 +368,9 @@ function recent_tab()
 		vim.g.prev_tab = current_tab
 	else
 		vim.g.prev_tab = current_tab
-		vim.api.nvim_feedkeys("gT", "n", false)
+		vim.api.nvim_feedkeys('<c-\\><c-n>', 'i', false)
+		vim.api.nvim_feedkeys('gt', 'n', false)
+		vim.api.nvim_feedkeys('i', 'n', false)
 	end
 end
 set("<A-l>", recent_tab,	"t i n")
@@ -385,7 +378,7 @@ set("<A-l>", recent_tab,	"t i n")
 ---=== Auto-containers ===---
 set('"',	'""<Esc>ha',	"i")
 set("'",	"''<Esc>ha",	"i")
-set("{",	"{}<Esc>ha",	"i")
+set("fjfj",	"{}<Esc>ha",	"i")
 set("(",	"()<Esc>ha",	"i")
 set("[",	"[]<Esc>ha",	"i")
 set("`",	"/*  */<Esc>hhha","i")
