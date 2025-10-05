@@ -19,7 +19,7 @@ vim.opt.tabstop = 4
 vim.opt.clipboard:append("unnamedplus")
 vim.opt.keywordprg = ":h"
 vim.opt.shell = '/nix/store/avwdl5bnf4xl7nf60vrxxs5q7z39l02k-powershell-7.5.1/bin/pwsh'
-vim.opt.listchars = "space:·,tab:▶∘"
+vim.opt.listchars = "space:|,tab:▶∘"
 
 ---============================ Lazy.nvim Config ============================---
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -29,7 +29,7 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
 	spec = {
 		{
-			"rebelot/kanagawa.nvim", config = function() vim.cmd.colorscheme "kanagawa" end
+			"shaunsingh/nord.nvim", config = function() vim.cmd.colorscheme "nord" end
 		}, {
 			"nvim-telescope/telescope.nvim", tag = "0.1.8",
 			dependencies = {"nvim-lua/plenary.nvim"}
@@ -148,80 +148,85 @@ local function file_size()
 	return string.format('%.2f %s', size_bytes, units[i])
 end
 
----============== Defining new statusbar theme ==============---
----------- Custom function for theming
-local new_theme    = require('lualine.themes.auto')
-new_theme.normal.a = new_theme.normal.a or {}
-new_theme.normal.x = new_theme.normal.x or {}
-new_theme.normal.z = new_theme.normal.z or {}
-
-new_theme.insert   = new_theme.insert or {}
-new_theme.insert.a = new_theme.insert.a or {}
-new_theme.insert.x = new_theme.insert.x or {}
-new_theme.insert.z = new_theme.insert.z or {}
-
-new_theme.visual   = new_theme.visual or {}
-new_theme.visual.a = new_theme.visual.a or {}
-new_theme.visual.x = new_theme.visual.x or {}
-new_theme.visual.z = new_theme.visual.z or {}
-
-new_theme.replace   = new_theme.replace or {}
-new_theme.replace.a = new_theme.replace.a or {}
-new_theme.replace.x = new_theme.replace.x or {}
-new_theme.replace.z = new_theme.replace.z or {}
-
----------- Coloring each section in each mode
----------- Section A
-new_theme.normal.a.fg = "#FFFFFF"
-new_theme.normal.a.bg = "#2A447A"
-
-new_theme.insert.a.fg = "#FFFFFF"
-new_theme.insert.a.bg = "#556D37"
-
-new_theme.visual.a.fg = "#FFFFFF"
-new_theme.visual.a.bg = "#4D3C67"
-
-new_theme.replace.a.fg = "#FFFFFF"
-new_theme.replace.a.bg = "#9B4008"
-
----------- Section X
-new_theme.normal.x.fg = "#7B98D2"
-new_theme.normal.x.bg = "#242433"
-
----------- Section Z
-new_theme.normal.z.fg = "#000000"
-new_theme.normal.z.bg = "#7B98D2"
-
-new_theme.insert.z.fg = "#000000"
-new_theme.insert.z.bg = "#92B368"
-
-new_theme.visual.z.fg = "#000000"
-new_theme.visual.z.bg = "#907BB2"
-
-new_theme.replace.z.fg = "#000000"
-new_theme.replace.z.bg = "#F79B63"
-
-color = function()
-	local mode = vim.fn.mode()
-	local mode_colors = {
-		normal  = { fg = new_theme.normal.x.fg, bg = new_theme.normal.x.bg },
-		insert  = { fg = new_theme.insert.x.fg, bg = new_theme.insert.x.bg },
-		visual  = { fg = new_theme.visual.x.fg, bg = new_theme.visual.x.bg },
-		replace = { fg = new_theme.replace.x.fg, bg = new_theme.replace.x.bg },
-	}
-	return mode_colors[mode] or mode_colors.normal -- Fallback to normal if mode not defined
-end
-
 ---============================ Plugin Bindings ============================---
 ----------------- Lualine
 require('lualine').setup {
-	options = { theme = new_theme },
+	options = { theme = 'nord' },
 	sections = {
 		lualine_x = { 'encoding', 'fileformat', { 'filetype', color }, file_size, },
 		lualine_y = { '' },
 		lualine_z = { 'progress', 'location', },
 	},
 }
+
+-- Nord theme config
+vim.g.nord_bold = true
+vim.g.nord_italic = false
+vim.g.nord_borders = true
+vim.g.nord_contrast = true
+vim.g.nord_disable_background = false
+vim.g.nord_uniform_diff_background = true
+
+-- Loading colorscheme
+require('nord').set()
+
+	-- black				="#2E3440",
+	-- dark_gray			="#3B4252",
+	-- gray					="#434C5E",
+	-- light_gray			="#4C566A",
+	-- light_gray_bright	="#616E88",
+	-- darkest_white		="#D8DEE9",
+	-- darker_white			="#E5E9F0",
+	-- white				="#ECEFF4",
+	-- teal					="#8FBCBB",
+	-- off_blue				="#88C0D0",
+	-- glacier				="#81A1C1",
+	-- blue					="#5E81AC",
+	-- red					="#BF616A",
+	-- orange				="#D08770",
+	-- yellow				="#EBCB8B",
+	-- green				="#A3BE8C",
+	-- purple				="#B48EAD",
+	-- none					="NONE",
+
+vim.cmd('colorscheme nord')
+vim.api.nvim_set_hl(0, "Normal", { fg = "#D8DEE9", bg = "#2E3440" })
+vim.api.nvim_set_hl(0, "String", { ctermfg = 0, fg = "#81C1D1" })
+vim.api.nvim_set_hl(0, "MatchParen", { fg = "#ffffff", bg = "#d08770" })
+
+----------------- Get last character position in selection
+-- local function get_max_name_column()
+--     -- Get the start and end line numbers of the last visual selection
+--     local start_line = vim.fn.line("'<")
+--     local end_line = vim.fn.line("'>")
+--     local max_col = 0
+--
+--     -- Iterate through each line in the selection
+--     for i = start_line, end_line do
+--         local line_text = vim.fn.getline(i)
+--
+--         -- Find the position (byte index) of the first whitespace after the name
+--         -- '\S\s\+' finds a non-whitespace followed by one or more whitespace
+--         local end_of_name_idx = vim.fn.match(line_text, '\\S\\s\\+')
+--
+--         -- If a match is found (end_of_name_idx is not -1)
+--         if end_of_name_idx > -1 then
+--             -- The column we want is 1 character past the end of the name
+--             local byte_pos = end_of_name_idx + 1
+--
+--             -- Convert the byte position to a screen (virtual) column number
+--             local virt_col = vim.fn.virtcol({i, byte_pos})
+--
+--             if virt_col > max_col then
+--                 max_col = virt_col
+--             end
+--         end
+--     end
+--
+--     -- Display the final result
+--     print("Max Column for Name End: " .. max_col)
+-- end
+-- vim.api.nvim_create_user_command('MaxCol', get_max_name_column, {})
 
 ----------------- Telescope
 local actions = require("telescope.actions")
@@ -230,7 +235,7 @@ require("telescope").setup({
 		path_display = {"truncate"},
 		mappings = {
 			n = {
-				["X"] = actions.delete_buffer,
+				["dd"] = actions.delete_buffer,
 			},
 		},
 	},
@@ -240,7 +245,7 @@ local scope = require("telescope.builtin")
 vim.keymap.set("n", "<leader>f", function()
 	scope.find_files({
 		hidden = true,
-		find_command = {"fd", "-H", "-p", "--no-ignore", ".", "nixos"}
+		find_command = {"fd", "-H", "-p", "--no-ignore", ".", "nixos", "Documents"}
 	})
 end)
 
@@ -295,8 +300,8 @@ local wait_map = function(key, modes)
 	end
 end
 
-set("<c-;>", ":noh<cr>", "v n c")
-set("<c-;>", "<esc>",	 "i")
+---=== Netrw remaps ===---
+-- vim.cmd("au FileType netrw nnoremap <buffer> <Leader>a g:netrw-reverse")
 
 ---=== Leader-key remaps ===---
 set("<leader>s",	":w<cr>",		"n v")
@@ -311,7 +316,6 @@ set("<leader>t",	":term<cr>",	"n v")
 set("<leader>n",	":tabnew<cr>",	"n v")
 set("<leader>k",	"J",			"n v")
 set("<leader>=",	"^V%=",			"n v")
-set("<leader>[",	"<C-\\><C-n>",	"t")
 set("<leader>b",	":Telescope buffers<cr><esc>",	"n v")
 set("<leader>o",	":Telescope oldfiles<cr>",	"n v")
 
@@ -332,7 +336,9 @@ set("N",	"Nzz",		"n v")
 set("M",	"`",		"n v")
 set("gg",	"ggzz",		"n v")
 set("G",	"Gzz",		"n v")
-set("<A-k>",	"K", 	"n v")
+set("<c-k>","K",	 	"n v")
+set("<a-j>","ddp",		"n")
+set("<a-k>","ddkP",		"n")
 
 ---=== Editing remaps ===---
 set("<C-S-a>",		'ggVG',		"n v")
@@ -350,15 +356,9 @@ set("<Tab>",		">>",		"n")
 set("<S-Tab>",		"<<",		"n")
 set("<Tab>",		">",		"v")
 set("<S-Tab>",		"<",		"v")
+set("<a-n>",		"<cr>",		"v i n t")
 
 ---=== Powermaps ===---
-set(";",	'^v$h"+y',	"n v")
-set("d;",	"V%d",		"n v")
-set("v;",	"V%y",		"n v")
-set("c;",	function()
-	vim.api.nvim_feedkeys("v%gc", "v", false)
-end,		"n v")
-
 vim.g.prev_tab = nil
 function recent_tab()
 	local current_tab = vim.api.nvim_get_current_tabpage()
@@ -368,12 +368,18 @@ function recent_tab()
 		vim.g.prev_tab = current_tab
 	else
 		vim.g.prev_tab = current_tab
-		vim.api.nvim_feedkeys('<c-\\><c-n>', 'i', false)
 		vim.api.nvim_feedkeys('gt', 'n', false)
 		vim.api.nvim_feedkeys('i', 'n', false)
 	end
 end
+
+set(";",	'^v$h"+y',	"n v")
+set("d;",	"V%d",		"n v")
+set("v;",	"V%y",		"n v")
+set("c;",	function() vim.api.nvim_feedkeys("v%gc", "v", false) end, "n v")
 set("<A-l>", recent_tab,	"t i n")
+set("<c-;>", "<esc>",	 	"i")
+set("<c-;>", "<C-\\><C-n>",	"t")
 
 ---=== Auto-containers ===---
 set('"',	'""<Esc>ha',	"i")
