@@ -11,13 +11,14 @@ If you still want to give it a try, i will try to write some descriptive comment
 
 But i will make this clear, i have not made this for other people, i have made this for me and my mind to make me faster - besides that i will give a brief overview of all the settings
 # Overview
-## Lazy.git Initializer
+<img src='./nvim-screenshot.png' alt='Greatervim Splash Screen on Nvim'>
+## Lazy.nvim Initializer
 - I just have the boilerplate lazy package manager function that installs lazy and sets up the path for nvim from which it would manage plugins
 - I have it commented out because it is unnecessary after install, but i might need it later you never know - as far as i know you can just remove it if you want
-- After defining the function the path itself is defined
+- After defining the function, the path itself is defined
 ## Leader Keys
-- `leader` is set to be space, i use it all the time
-- `localleader` is set to be /, i never use it but i have it, maybe i'll map it to something later
+- `leader` is set to be `space`, i use it all the time
+- `localleader` is set to be `/`, i never use it but i have it, maybe i'll map it to something later
 ## Accessibility Settings
 These are just some settings to make the environment a bit more condusive to live in
 - `ignorecase = true` - i hate case-sensitivity
@@ -35,13 +36,10 @@ These are just some settings to make the environment a bit more condusive to liv
 	- i set it to go to a vim help page for the word instead of looking for a man page
 ## Packages
 These are the packages that i've installed
-- Kanagawa theme
+- Nord theme (customised)
 - Telescope
-- Vim be good
-- Treeshitter
 - Lualine
 - Vim Fugitive
-- Actually doom - its fun but its a bit clunky, i might remove it
 ## Splash Screen
 I'll just tell the steps the function goes through to show the screen on startup
 ### Prerequisites
@@ -101,60 +99,6 @@ I'll just tell the steps the function goes through to show the screen on startup
 	- Enabled searching through hidden files
 	- Set the search mechanism to be `rg --files --hidden`
 - Set `<leader>g` to show the `live_grep` menu
-### Neovide
-- Set `ctrl -` to zoom out
-- Set `ctrl =` to zoom in
-### Treesitter
-- Installed the configs for
-	- HTML
-	- CSS
-	- JS
-	- Lua
-	- Python
-- Enabled highlighting
-- Enabled indenting
-## Zen Mode
-I had heard about a plugin that opens two empty buffers on either side of the current buffer allowing you to focus more on your current window since it was now narrower - its basically just an easier way to get tunnel vision
-
-I had thought about getting this Zen Mode plugin to try it out but i dont really like having any dependencies if i dont need to and this seemed like a pretty simple thing to create myself, so instead of trying read the manual and finding the handful of commands that will make this work, i just asked AI to do it for me
-
-It produced half-working code so i debugged it for like 30min and then it was working just fine, i even ended up adding a feature where i can add any background color to the side buffers, just to make it a bit nicer
-
-### Execution Steps
-- Creates a variable `e_clr` which holds the background color
-- Sets the variable for padding
-- The function for zen mode
-	- Gets the current tab ID
-	- Gets the current window from the current tab
-		- Window means pane
-	- A table for holding the zen-wins is created
-	- A main-win variable is set to nil
-	- It loops through all the windows present in the current tab
-		- Finds and keeps the zen-win ids in the zen-wins table
-		- Finds and places the current window ID in the main-win variable
-		- If `buftype=nofile` then
-			- The ID for that win goes into the table
-		- Else if `win-id == the current win id` then
-			- It goes in the main-win variable
-	- If the table has more than or equal to two elements then
-		- It gets rid of the empty windows
-		- It makes the status bar visible
-	- Else
-		- It gets the width of the current window
-		- Creates the width for the sidebars relative to its size
-		- Creates the right sidebar
-			- Applies the bg color
-			- Get the IDs for the right win and its buffer
-			- Sets the width for the right sidebar
-		- Creates the left sidebar
-			- Does the same stuff
-		- Initializes the `make_silent` function
-			- I have just used this turn off as many settings as i can for the windows to make them as empty as i can
-		- Applies the non-settings to both sidebars
-		- Moves the cursor back to the main window
-		- Hides the statusbar
-- Gets the background color that i defined
-- Checks if the color exists, if it doesnt then it gets the default colors of the editor
 ## Keybindings
 I have created a few functions to make the process of making different types of bindings easier and more bearable
 
@@ -181,87 +125,96 @@ I have created a few functions to make the process of making different types of 
 - Now of course the original `/` and `?` are still operational but i overwrote the `f` and `F` keys to take on the functionality of the `wait function`
 ### Leader Maps
 
-| Key \<leader> | Command                       | Description                                                        |
-| ------------- | ----------------------------- | ------------------------------------------------------------------ |
-| `s`           | `:w<cr>`                      | saves the current file                                             |
-| `q`           | `:q<cr>`                      | quits the current tab                                              |
-| `r`           | `:so<cr>`                     | refreshes the current file                                         |
-| `L`           | `:Lazy<cr>`                   | opens the lazy.git menu                                            |
-| `e`           | `"+yiw`                       | copies the word under cursor to the clipboard                      |
-| `p`           | `viw"+p`                      | replaces the word under cursor with latest text from the clipboard |
-| `v`           | `<C-v>`                       | starts visual block mode                                           |
-| `j`           | `<C-^>`                       | switches to previous buffer                                        |
-| `t`           | `:term<cr>`                   | opens the shell in the current tab                                 |
-| `n`           | `:tabnew<cr>`                 | creates a new tab to the right                                     |
-| `k`           | `J`                           | pulls the current line up to the end of the previous line          |
-| `=`           | `^V%=`                        | selects a function and then auto-indents it                        |
-| `<esc>`       | `<C-\\><C-n>`                 | gets out of terminal mode                                          |
-| `b`           | `:Telescope buffers<cr><esc>` | opens the buffers panel in telescope                               |
-| `o`           | `:Telescope oldfiles<cr>`     | opens the oldfiles panel in telescope                              |
-| `z`           | `zen function`                | starts the zen function that was created before                    |
+| \<leader> + key | Command                       | Description                                                        |
+| --------------- | ----------------------------- | ------------------------------------------------------------------ |
+| `s`             | `:w<cr>`                      | saves the current file                                             |
+| `q`             | `:q<cr>`                      | quits the current tab                                              |
+| `r`             | `:so<cr>`                     | refreshes the current file                                         |
+| `L`             | `:Lazy<cr>`                   | opens the lazy.git menu                                            |
+| `e`             | `"+yiw`                       | copies the word under cursor to the clipboard                      |
+| `p`             | `viw"+p`                      | replaces the word under cursor with latest text from the clipboard |
+| `v`             | `<C-v>`                       | starts visual block mode                                           |
+| `j`             | `<C-^>`                       | switches to previous buffer                                        |
+| `t`             | `:term<cr>`                   | opens the shell in the current tab                                 |
+| `n`             | `:tabnew<cr>`                 | creates a new tab to the right                                     |
+| `k`             | `J`                           | pulls the current line up to the end of the previous line          |
+| `=`             | `^V%=`                        | selects a function and then auto-indents it                        |
+| `<esc>`         | `<C-\\><C-n>`                 | gets out of terminal mode                                          |
+| `f`             | `:Telescope find_files`       | opens the find_files panel in telescope                            |
+| `b`             | `:Telescope buffers<cr><esc>` | opens the buffers panel in telescope                               |
+| `o`             | `:Telescope oldfiles<cr>`     | opens the oldfiles panel in telescope                              |
+
 ### Movement Maps
 
-| Key     | Command   | Desciption                                                          |
-| ------- | --------- | ------------------------------------------------------------------- |
-| `k`     | `kzz`     | moves up and centers the screen                                     |
-| `j`     | `jzz`     | moves down and centers the screen                                   |
-| `K`     | `<C-u>zz` | page up and center screen                                           |
-| `J`     | `<C-d>zz` | page down and center screen                                         |
-| `a`     | `i`       | enter insert mode on the left                                       |
-| `A`     | `I`       | move to the beginning of the line in insert mode                    |
-| `i`     | `a`       | enter insert mode on the right                                      |
-| `I`     | `A`       | move to the end of the line in insert mode                          |
-| `H`     | `^`       | move to the beginning of the line in normal mode                    |
-| `L`     | `$`       | move to the end of the line in normal mode                          |
-| `L`     | `$h`      | move to the end of the line in visual mode and moves back one space |
-| `n`     | `nzz`     | jump to the next search result and centers the screen               |
-| `N`     | `Nzz`     | jump to the previous search result and centers the screen           |
-| `M`     | ``` ` ``` | jump to the defined mark on the page                                |
-| `gg`    | `ggzz`    | go to the top of the page and center screen                         |
-| `G`     | `Gzz`     | go to the bottom of the page and center screen                      |
-| `alt k` | `K`       | open help section for the word under the cursor                     |
+| Key      | Command   | Desciption                                                                                        |
+| -------- | --------- | ------------------------------------------------------------------------------------------------- |
+| `k`      | `kzz`     | moves up and centers the screen                                                                   |
+| `j`      | `jzz`     | moves down and centers the screen                                                                 |
+| `K`      | `<C-u>zz` | page up and center screen                                                                         |
+| `J`      | `<C-d>zz` | page down and center screen                                                                       |
+| `a`      | `i`       | enter insert mode on the left                                                                     |
+| `A`      | `I`       | move to the beginning of the line in insert mode                                                  |
+| `i`      | `a`       | enter insert mode on the right                                                                    |
+| `I`      | `A`       | move to the end of the line in insert mode                                                        |
+| `H`      | `^`       | move to the beginning of the line in normal mode                                                  |
+| `L`      | `$`       | move to the end of the line in normal mode                                                        |
+| `L`      | `$h`      | move to the end of the line in visual mode and move back one space                                |
+| `n`      | `nzz`     | jump to the next search result and center the screen                                              |
+| `N`      | `Nzz`     | jump to the previous search result and center the screen                                          |
+| `M`      | ``` ` ``` | jump to the defined mark on the page                                                              |
+| `G`      | `Gzz`     | go to the bottom of the page and center screen                                                    |
+| `ctrl k` | `K`       | open help section for the word under the cursor                                                   |
+| `alt j`  | `ddp`     | Deletes the current line and moves it up, creates the illusion of dragging a line up the page     |
+| `alt k`  | `ddkP`    | Deletes the current line and moves it down, creates the illusion of dragging a line down the page |
 ### Editing Maps
 
-| Key            | Command   | Description                            |
-| -------------- | --------- | -------------------------------------- |
-| `ctrl shift a` | `ggVG`    | selects the entire file                |
-| `space a`      | `ggVG"+y` | selects the entire file and copies it  |
-| `y`            | `"+y`     | copies things to the system clipboard  |
-| `d`            | `"+d`     | deletes things to the system clipboard |
-| `s`            | `"+s`     | deletes things to the system clipboard |
-| `U`            | `<C-r>`   | undo                                   |
-| `dH`           | `d^`      | delete to the beginning of the line    |
-| `alt B`        | `<C-w>`   | delete one word back while typing      |
-| `alt b`        | `<BS>`    | delete one letter back while typing    |
-| `p`            | `"+p`     | paste things from system clipboard     |
-| `alt '`        | ``` ` ``` | type `                                 |
+| Key            | Command   | Description                                                   |
+| -------------- | --------- | ------------------------------------------------------------- |
+| `ctrl shift a` | `ggVG`    | selects the entire file                                       |
+| `space a`      | `ggVG"+y` | selects the entire file and copies it                         |
+| `y`            | `"+y`     | copies things to the system clipboard                         |
+| `d`            | `"+d`     | deletes things to the system clipboard                        |
+| `s`            | `"+s`     | deletes things to the system clipboard                        |
+| `U`            | `<C-r>`   | undo                                                          |
+| `dH`           | `d^`      | delete to the beginning of the line                           |
+| `alt B`        | `<C-w>`   | delete one word back while typing                             |
+| `alt b`        | `<BS>`    | delete one letter back while typing                           |
+| `p`            | `"+p`     | paste things from system clipboard                            |
+| `alt '`        | ``` ` ``` | type \`, because i dont want to reach all the way to the edge |
+| `tab`          | `>>`      | Moves the line forward by one tab in normal mode              |
+| `shift tab`    | `<<`      | Moves the line backward by one tab in normal mode             |
+| `tab`          | `>`       | Moves the line forward by one tab in visual mode              |
+| `shift tab`    | `<`       | Moves the line backward by one tab in visual mode             |
+| `alt n`        | `enter`   | Presses enter in normal, visual, insert and terminal mode     |
 
 ### Power Maps
 
-| Key     | Command                 | Description                                                                                                                   |
-| ------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| `;`     | `^v$h"+y`               | copies all the text on the current line but not the full line                                                                 |
-| `d;`    | `V%d`                   | deletes a function                                                                                                            |
-| `v;`    | `V%y`                   | copies a function                                                                                                             |
-| `c;`    | `nvim_feedkeys("v%gc")` | comments out a function or a line of code, tried to make this work normally but it didnt behave properly so i had to force it |
-| `alt l` | `recent_tab function`   | custom function that switches tabs between the current tab and the most recent tab                                            |
+| Key     | Command                 | Description                                                                                                                                                      |
+| ------- | ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `;;`    | `^v$h"+y`               | copies all the text on the current line into the clipboard but no trailing whitespace                                                                            |
+| `;h`    | `v^"+y`                 | copies all text from the current cursor position to the beginning of the line into the clipboard                                                                 |
+| `;l`    | `v$h"+y`                | copies all text from the current cursor position to the end of the line into the clipboard                                                                       |
+| `d;`    | `V%d`                   | deletes a block of code from the starting bracket to the ending bracket                                                                                          |
+| `v;`    | `V%y`                   | copies a block of code from the starting bracket to the ending bracket                                                                                           |
+| `c;`    | `nvim_feedkeys("v%gc")` | comments out a block of code from the starting bracket to the ending bracket, tried to make this work normally but it didnt behave properly so i had to force it |
+| `alt l` | `ctrl \, ctrl n, gt`    | escapes out into normal mode and then switches to the next tab, very nice                                                                                        |
 ### Auto-containers
 
-| Key       | Command           | Description                                                             |
-| --------- | ----------------- | ----------------------------------------------------------------------- |
-| `"`       | `""<Esc>ha`       | places two double quotes then moves the cursor to the middle            |
-| `'`       | `''<Esc>ha`       | places two single quotes then moves the cursor to the middle            |
-| `{`       | `{}<Esc>ha`       | places two braces then moves the cursor to the middle                   |
-| `(`       | `()<Esc>ha`       | places two parens then moves the cursor to the middle                   |
-| `[`       | `[]<Esc>ha`       | places two brackets then moves the cursor to the middle                 |
-| ``` ` ``` | `/*  */<Esc>hhha` | places a c-style multi-line comment then moves the cursor to the middle |
+| Key       | Command           | Description                                                                                                                              |
+| --------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `"`       | `""<Esc>ha`       | places two double quotes then moves the cursor to the middle                                                                             |
+| `'`       | `''<Esc>ha`       | places two single quotes then moves the cursor to the middle                                                                             |
+| `oij`     | `{}<Esc>ha`       | places two braces then moves the cursor to the middle, i tried just using `{` but that didnt work for some reason so i made something up |
+| `(`       | `()<Esc>ha`       | places two parens then moves the cursor to the middle                                                                                    |
+| `[`       | `[]<Esc>ha`       | places two brackets then moves the cursor to the middle                                                                                  |
+| ``` ` ``` | `/*  */<Esc>hhha` | places a c-style multi-line comment then moves the cursor to the middle                                                                  |
 ### Searching Maps
 
-| Key     | Command    | Description                                                      |
-| ------- | ---------- | ---------------------------------------------------------------- |
-| `<A-;>` | `%`        | moves from the closest bracket to the closest connecting bracket |
-| `<A-w>` | `*zz`      | search for the word under the cursor                             |
-| `<Esc>` | `:noh<cr>` | no highlights on the screen                                      |
+| Key           | Command | Description                                                      |
+| ------------- | ------- | ---------------------------------------------------------------- |
+| `alt ;`       | `%`     | moves from the closest bracket to the closest connecting bracket |
+| `alt w`       | `*zz`   | search for the word under the cursor forwards                    |
+| `alt shift w` | `#zz`   | search for the word under the cursor backwards                   |
 <img>
 
 | Key           | Description                                                                         |
@@ -269,6 +222,6 @@ I have created a few functions to make the process of making different types of 
 | `wait_map(f)` | when activated, it takes input and then after 500ms searches forward for the input  |
 | `wait_map(F)` | when activated, it takes input and then after 500ms searches backward for the input |
 ### HTML Autotags
-- I write htmx and because of that some html typing is required
+- I write htmx and because of that some html typing is required, so i created some bindings that create an html tag automatically
 - I dont want to figure out how to make the tag creation automatic through a plugin or a setting or something so im just making all of the templating myself and its good enough that i dont need to care
-- I do most of the programming in go anyway, so it doesnt really matter
+- I do most of the programming in go and js anyway, so it doesnt really matter

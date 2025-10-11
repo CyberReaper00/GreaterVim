@@ -334,7 +334,6 @@ set("L",	"$h",		"v")
 set("n",	"nzz",		"n v")
 set("N",	"Nzz",		"n v")
 set("M",	"`",		"n v")
-set("gg",	"ggzz",		"n v")
 set("G",	"Gzz",		"n v")
 set("<c-k>","K",	 	"n v")
 set("<a-j>","ddp",		"n")
@@ -359,32 +358,20 @@ set("<S-Tab>",		"<",		"v")
 set("<a-n>",		"<cr>",		"v i n t")
 
 ---=== Powermaps ===---
-vim.g.prev_tab = nil
-function recent_tab()
-	local current_tab = vim.api.nvim_get_current_tabpage()
-
-	if vim.g.prev_tab ~= nil then
-		vim.api.nvim_set_current_tabpage(vim.g.prev_tab)
-		vim.g.prev_tab = current_tab
-	else
-		vim.g.prev_tab = current_tab
-		vim.api.nvim_feedkeys('gt', 'n', false)
-		vim.api.nvim_feedkeys('i', 'n', false)
-	end
-end
-
-set(";",	'^v$h"+y',	"n v")
+set(";;",	'^v$h"+y',	"n v")
+set(";h",	'v^"+y',	"n v")
+set(";l",	'v$h"+y',	"n v")
 set("d;",	"V%d",		"n v")
 set("v;",	"V%y",		"n v")
-set("c;",	function() vim.api.nvim_feedkeys("v%gc", "v", false) end, "n v")
-set("<A-l>", recent_tab,	"t i n")
-set("<c-;>", "<esc>",	 	"i")
+set("c;",	function() vim.api.nvim_feedkeys("$v%gc", "v", false) end, "n v")
+set("<A-l>", "<C-\\><C-n>gt",	"t i n")
+set("<c-;>", "<esc>", 	"i")
 set("<c-;>", "<C-\\><C-n>",	"t")
 
 ---=== Auto-containers ===---
 set('"',	'""<Esc>ha',	"i")
 set("'",	"''<Esc>ha",	"i")
-set("fjfj",	"{}<Esc>ha",	"i")
+set("oij",	"{}<Esc>ha",	"i")
 set("(",	"()<Esc>ha",	"i")
 set("[",	"[]<Esc>ha",	"i")
 set("`",	"/*  */<Esc>hhha","i")
@@ -433,7 +420,7 @@ end
 vim.api.nvim_create_autocmd("FileType", {
 	pattern = "html",
 	callback = function(ev)
-		--------------- Top Hats
+		--------------- Top hats
 		html_tag("--hl", "<html>", "</html>", ev.buf)
 		html_tag("--hd", "<head>", "</head>", ev.buf)
 		set("--ma", meta, "i", ev.buf)
@@ -441,18 +428,21 @@ vim.api.nvim_create_autocmd("FileType", {
 		html_tag("--se", "<style>", "</style>", ev.buf)
 
 		--------------- Body builders
-		html_tag("--by", "<body>", "</body>", ev.buf)
-		html_tag("--nv", "<nav>", "</nav>", ev.buf)
-		html_tag("--dv", "<div>", "</div>", ev.buf)
-		html_tag("--p", "<p>", "</p>", ev.buf)
-		html_tag("--a", "<a href=''>", "</a>", ev.buf)
-		html_tag("--ig", "<img src=''>", "", ev.buf)
+		html_tag("--by", "<body>",		"</body>",	ev.buf)
+		html_tag("--nv", "<nav>", 		"</nav>",	ev.buf)
+		html_tag("--dv", "<div>", 		"</div>",	ev.buf)
+		html_tag("--p",  "<p>", 		"</p>", 	ev.buf)
+		html_tag("--a",  "<a href=''>", "</a>", 	ev.buf)
+		html_tag("--ig", "<img src=''>",	"",		ev.buf)
 		html_tag("--it", "<input class='' type='' value=''>", "", ev.buf)
-		html_tag("--hr", "<header>", "</header>", ev.buf)
-		html_tag("--h1", "<h1>", "</h1>", ev.buf)
-		html_tag("--h2", "<h2>", "</h2>", ev.buf)
-		html_tag("--h3", "<h3>", "</h3>", ev.buf)
-		html_tag("--h4", "<h4>", "</h4>", ev.buf)
-		html_tag("--sn", "<span>", "</span>", ev.buf)
+		html_tag("--hr", "<header>", 	"</header>",ev.buf)
+		html_tag("--h1", "<h1>", 		"</h1>", 	ev.buf)
+		html_tag("--h2", "<h2>", 		"</h2>", 	ev.buf)
+		html_tag("--h3", "<h3>", 		"</h3>", 	ev.buf)
+		html_tag("--h4", "<h4>", 		"</h4>", 	ev.buf)
+		html_tag("--sn", "<span>", 		"</span>",	ev.buf)
+
+		--------------- Foot guns
+		html_tag("--fr", "<footer>",	"</footer>",ev.buf)
 	end,
 })
