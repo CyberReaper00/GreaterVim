@@ -6,6 +6,7 @@ vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
 --=== Accessibility settings ===
+vim.o.timeoutlen = 200
 vim.o.ignorecase = true
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
@@ -274,7 +275,7 @@ local function split(istr, sep)
 	return t
 end
 
-local set = function(lhs, rhs, modes)
+local function set(lhs, rhs, modes)
 	local mode_arr = split(modes, " ")
 	for _, mode in ipairs(mode_arr) do
 		vim.keymap.set(mode, lhs, rhs, { noremap = true, silent = true })
@@ -282,7 +283,7 @@ local set = function(lhs, rhs, modes)
 end
 
 ---============ Search timer function ============---
-local wait_map = function(key, modes)
+local function wait_map(key, modes)
 	local mode_arr = split(modes, " ")
 	for _, mode in ipairs(mode_arr) do
 		vim.keymap.set(mode, key, function()
@@ -300,6 +301,12 @@ local wait_map = function(key, modes)
 	end
 end
 
+---=== function for retaining cursor position while executing other commands ===---
+local function retain(exec_seq)
+	set(exec_seq, "", "i")
+	vim.api.nvim_feedkeys(exec_seq .. vim.api.nvim_win_get_cursor(0)[2] .. "l:w\n", "n", false)
+end
+
 ---=== Netrw remaps ===---
 -- vim.cmd("au FileType netrw nnoremap <buffer> <Leader>a g:netrw-reverse")
 
@@ -315,9 +322,10 @@ set("<leader>j",	"<C-^>",		"n v")
 set("<leader>t",	":term<cr>",	"n v")
 set("<leader>n",	":tabnew<cr>",	"n v")
 set("<leader>k",	"J",			"n v")
-set("<leader>=",	"^V%=",			"n v")
+set("<leader>=",	"$V%=",			"n v")
 set("<leader>b",	":Telescope buffers<cr><esc>",	"n v")
 set("<leader>o",	":Telescope oldfiles<cr>",	"n v")
+set("<leader><leader>", "yiw:%s/<c-r>+/rr/g", "n")
 
 ---=== Movement remaps ===---
 set("k",	"kzz",		"n v")
@@ -336,8 +344,6 @@ set("N",	"Nzz",		"n v")
 set("M",	"`",		"n v")
 set("G",	"Gzz",		"n v")
 set("<c-k>","K",	 	"n v")
-set("<a-j>","ddp",		"n")
-set("<a-k>","ddkP",		"n")
 
 ---=== Editing remaps ===---
 set("<C-S-a>",		'ggVG',		"n v")
@@ -355,34 +361,38 @@ set("<Tab>",		">>",		"n")
 set("<S-Tab>",		"<<",		"n")
 set("<Tab>",		">",		"v")
 set("<S-Tab>",		"<",		"v")
-set("<a-n>",		"<cr>",		"v i n t")
+set("<a-n>",		"\n",		"v i n t")
+set("<a-j>",		function() retain("ddp") end,	"n")
+set("<a-k>",		function() retain("ddkP") end,	"n")
+set("<c-a-k>",		function() retain("yyP") end,	"n")
+set("<c-a-j>",		function() retain("yyp") end,	"n")
 
 ---=== Powermaps ===---
 set(";;",	'^v$h"+y',	"n v")
 set(";h",	'v^"+y',	"n v")
 set(";l",	'v$h"+y',	"n v")
-set("d;",	"V%d",		"n v")
-set("v;",	"V%y",		"n v")
-set("c;",	function() vim.api.nvim_feedkeys("$v%gc", "v", false) end, "n v")
+set("d;",	"$V%d:w\n",	"n v")
+set("v;",	"$V%y",		"n v")
+set("c;",	function() vim.api.nvim_feedkeys("$v%gc:w\n", "v", false) end, "n v")
 set("<A-l>", "<C-\\><C-n>gt",	"t i n")
 set("<c-;>", "<esc>", 	"i")
 set("<c-;>", "<C-\\><C-n>",	"t")
 
 ---=== Auto-containers ===---
-set('"',	'""<Esc>ha',	"i")
-set("'",	"''<Esc>ha",	"i")
-set("oij",	"{}<Esc>ha",	"i")
-set("(",	"()<Esc>ha",	"i")
-set("[",	"[]<Esc>ha",	"i")
+set('"',	'""<Esc>ha',"i")
+set("'",	"''<Esc>ha","i")
+set("oij",	"{}<Esc>ha","i")
+set("(",	"()<Esc>ha","i")
+set("[",	"[]<Esc>ha","i")
 set("`",	"/*  */<Esc>hhha","i")
 
 ---=== Searching remaps ===---
-set("<a-;>", 	"%",		"n v")
-set("<a-w>", 	"*zz",		"n v")
-set("<a-s-w>", 	"#zz",		"n v")
+set("<a-;>", 	"%",	"n v")
+set("<a-w>", 	"*zz",	"n v")
+set("<a-s-w>", 	"#zz",	"n v")
 
-wait_map("f",				"n v")
-wait_map("F",				"n v")
+wait_map("f",			"n v")
+wait_map("F",			"n v")
 
 ---=== HTML autotags ===---
 local function html_tag(cmd, open, close, bufnr)
@@ -409,10 +419,22 @@ local function html_tag(cmd, open, close, bufnr)
 	end
 end
 
-local function meta()
+local function html()
 	local filetype = vim.bo.filetype
 	if filetype == "html" then
-		local keys = vim.api.nvim_replace_termcodes("<meta charset='UTF-8'><esc>o<meta name='viewport' content='width=device-width, initial-scale=1.0'><esc>", true, true, true)
+		local keys = vim.api.nvim_replace_termcodes("" ..
+			"<html>" ..
+				"\n<head>" ..
+					"\n<meta charset='UTF-8'>"..
+					"\n<meta name='viewport' content='width=device-width, initial-scale=1.0'>" ..
+					"\n\n<title> </title>" ..
+					"\n\n <style>" ..
+					"\n</style>" ..
+				"\n</head>" ..
+				"\n\n<body>" ..
+				"\n</body>" ..
+			"\n</html>",
+		true, true, true)
 		vim.api.nvim_feedkeys(keys, "n", false)
 	end
 end
@@ -421,28 +443,30 @@ vim.api.nvim_create_autocmd("FileType", {
 	pattern = "html",
 	callback = function(ev)
 		--------------- Top hats
-		html_tag("--hl", "<html>", "</html>", ev.buf)
-		html_tag("--hd", "<head>", "</head>", ev.buf)
-		set("--ma", meta, "i", ev.buf)
-		html_tag("--tt", "<title>", "</title>", ev.buf)
-		html_tag("--se", "<style>", "</style>", ev.buf)
+		set("--hl", html, "i", ev.buf)
 
 		--------------- Body builders
-		html_tag("--by", "<body>",		"</body>",	ev.buf)
-		html_tag("--nv", "<nav>", 		"</nav>",	ev.buf)
-		html_tag("--dv", "<div>", 		"</div>",	ev.buf)
-		html_tag("--p",  "<p>", 		"</p>", 	ev.buf)
-		html_tag("--a",  "<a href=''>", "</a>", 	ev.buf)
-		html_tag("--ig", "<img src=''>",	"",		ev.buf)
-		html_tag("--it", "<input class='' type='' value=''>", "", ev.buf)
-		html_tag("--hr", "<header>", 	"</header>",ev.buf)
-		html_tag("--h1", "<h1>", 		"</h1>", 	ev.buf)
-		html_tag("--h2", "<h2>", 		"</h2>", 	ev.buf)
-		html_tag("--h3", "<h3>", 		"</h3>", 	ev.buf)
-		html_tag("--h4", "<h4>", 		"</h4>", 	ev.buf)
-		html_tag("--sn", "<span>", 		"</span>",	ev.buf)
+		html_tag("--by",	"<body>",		"</body>",	ev.buf)
+		html_tag("--nv",	"<nav>", 		"</nav>",	ev.buf)
+		html_tag("--dv",	"<div>", 		"</div>",	ev.buf)
+		html_tag("--p",		"<p>", 			"</p>", 	ev.buf)
+		html_tag("--a", 	"<a href=''>",	"</a>", 	ev.buf)
+		html_tag("--ig",	"<img src=''>",	"",			ev.buf)
+		html_tag("--it",	"<input class='' type='' value=''>", "", ev.buf)
+		html_tag("--hr",	"<header>", 	"</header>",ev.buf)
+		html_tag("--h1",	"<h1>", 		"</h1>", 	ev.buf)
+		html_tag("--h2",	"<h2>", 		"</h2>", 	ev.buf)
+		html_tag("--h3",	"<h3>", 		"</h3>", 	ev.buf)
+		html_tag("--h4",	"<h4>", 		"</h4>", 	ev.buf)
+		html_tag("--sn",	"<span>", 		"</span>",	ev.buf)
+
+		--------------- Formal folks
+		html_tag("--fr",  	"<form>",				"</form>",		ev.buf)
+		html_tag("--ll",  	"<label for=''>",		"</label>",		ev.buf)
+		html_tag("--st",	"<select id=''>",		"</select>",	ev.buf)
+		html_tag("--on",	"<option value=''>",	"</option>",	ev.buf)
 
 		--------------- Foot guns
-		html_tag("--fr", "<footer>",	"</footer>",ev.buf)
+		html_tag("--fr",	"<footer>",	"</footer>",ev.buf)
 	end,
 })
