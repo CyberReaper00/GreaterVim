@@ -345,8 +345,8 @@ set("<S-Tab>",		"<",		"v")
 set("<a-n>",		"\n",		"v i n t")
 set("<a-j>",		function() retain("ddp") end,	"n")
 set("<a-k>",		function() retain("ddkP") end,	"n")
-set("<c-a-k>",		function() retain("yyP") end,	"n")
 set("<c-a-j>",		function() retain("yyp") end,	"n")
+set("<c-a-k>",		function() retain("yyP") end,	"n")
 
 ---=== Powermaps ===---
 set(";;",	'^v$h"+y',	"n v")
