@@ -171,25 +171,6 @@ vim.g.nord_uniform_diff_background = true
 -- Loading colorscheme
 require('nord').set()
 
-	-- black				="#2E3440",
-	-- dark_gray			="#3B4252",
-	-- gray					="#434C5E",
-	-- light_gray			="#4C566A",
-	-- light_gray_bright	="#616E88",
-	-- darkest_white		="#D8DEE9",
-	-- darker_white			="#E5E9F0",
-	-- white				="#ECEFF4",
-	-- teal					="#8FBCBB",
-	-- off_blue				="#88C0D0",
-	-- glacier				="#81A1C1",
-	-- blue					="#5E81AC",
-	-- red					="#BF616A",
-	-- orange				="#D08770",
-	-- yellow				="#EBCB8B",
-	-- green				="#A3BE8C",
-	-- purple				="#B48EAD",
-	-- none					="NONE",
-
 vim.cmd('colorscheme nord')
 vim.api.nvim_set_hl(0, "Normal", { fg = "#D8DEE9", bg = "#2E3440" })
 vim.api.nvim_set_hl(0, "String", { ctermfg = 0, fg = "#81C1D1" })
