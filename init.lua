@@ -37,8 +37,6 @@ require("lazy").setup({
 		}, {
 			"ThePrimeagen/vim-be-good"
 		}, {
-			"nvim-treesitter/nvim-treesitter"
-		}, {
 			'nvim-lualine/lualine.nvim',
 			dependencies = {'nvim-tree/nvim-web-devicons'}
 		}, {
@@ -227,21 +225,13 @@ local scope = require("telescope.builtin")
 vim.keymap.set("n", "<leader>f", function()
 	scope.find_files({
 		hidden = true,
-		find_command = {"fd", "-H", "-p", "--no-ignore", ".", "nixos", "Documents"}
+		find_command = {"fd", "-p", "-u", "-t", "d", ".", "nixos", "Documents"}
 	})
 end)
 
 vim.keymap.set("n", "<leader>g", function()
 	scope.live_grep()
 end)
-
------------------ Treesitter
-local ts_config = require("nvim-treesitter.configs")
-ts_config.setup({
-	ensure_installed = {"html", "css", "javascript", "lua", "python"},
-	highlight = {enable = true},
-	indent = {enable = true}
-})
 
 ---============================ Global Bindings ============================---
 
@@ -306,7 +296,8 @@ set("<leader>k",	"J",			"n v")
 set("<leader>=",	"$V%=",			"n v")
 set("<leader>b",	":Telescope buffers<cr><esc>",	"n v")
 set("<leader>o",	":Telescope oldfiles<cr>",	"n v")
-set("<leader><leader>", "yiw:%s/<c-r>+/rr/g", "n")
+set("<leader><leader>", "yiw:%s/<c-r>+//g<left><left>", "n")
+set("<leader>d", ":Ex\n", "n")
 
 ---=== Movement remaps ===---
 set("k",	"kzz",		"n v")
@@ -357,7 +348,7 @@ set("v;",	"$V%y",		"n v")
 set("c;",	function() vim.api.nvim_feedkeys("$v%gc:w\n", "v", false) end, "n v")
 set("<A-l>", "<C-\\><C-n>gt",	"t i n")
 set("<c-;>", "<esc>", 	"i")
-set("<c-;>", "<C-\\><C-n>",	"t")
+set("<c-;>", "<C-\\><C-n>",	"t v")
 
 ---=== Auto-containers ===---
 set('"',	'""<Esc>ha',"i")
