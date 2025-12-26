@@ -1,3 +1,6 @@
+> [!important]
+> i dont use github anymore, i moved here: https://codeberg.org/CyberReaper00
+
 # Preface
 I've tried astrovim before, when i was first starting out with nvim, but when i turned it on there were so many plugins that just didnt work and always gave me errors no matter what i did and then on top of that the bindings were completely different from a normal base system that it just became static in my head and i always wondered what i'm supposed to do to get faster
 
