@@ -15,6 +15,7 @@ If you still want to give it a try, i will try to write some descriptive comment
 But i will make this clear, i have not made this for other people, i have made this for me and my mind to make me faster - besides that i will give a brief overview of all the settings
 # Overview
 <img src='./nvim-screenshot.png' alt='Greatervim Splash Screen on Nvim'>
+
 ## Lazy.nvim Initializer
 - I just have the boilerplate lazy package manager function that installs lazy and sets up the path for nvim from which it would manage plugins
 - I have it commented out because it is unnecessary after install, but i might need it later you never know - as far as i know you can just remove it if you want
